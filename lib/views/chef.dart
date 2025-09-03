@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/io_client.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../viewmodels/chef_view_model.dart';
+import '../models/menu_item.dart';
 
 void main() => runApp(const ChefApp());
 
@@ -30,28 +28,21 @@ class ChefPage extends StatefulWidget {
 
 class _ChefPageState extends State<ChefPage> {
   int _currentIndex = 0;
-  List<dynamic> _menuItems = [];
+  final _viewModel = ChefViewModel();
+  List<MenuItem> _menuItems = [];
   bool _loading = false;
 
-  Future<void> fetchMenu() async {
+  Future<void> _fetchMenu() async {
     setState(() => _loading = true);
-
-    final ioc = HttpClient()
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true; // ignore self-signed certs
-    final client = IOClient(ioc);
-
-    final response =
-        await client.get(Uri.parse("https://10.130.54.40:3000/api/menu"));
-
-    if (response.statusCode == 200) {
+    try {
+      final menu = await _viewModel.fetchMenu();
       setState(() {
-        _menuItems = json.decode(response.body);
+        _menuItems = menu;
         _loading = false;
       });
-    } else {
+    } catch (e) {
       setState(() => _loading = false);
-      throw Exception("Failed to load menu: ${response.statusCode}");
+      debugPrint(e.toString());
     }
   }
 
@@ -70,8 +61,8 @@ class _ChefPageState extends State<ChefPage> {
         itemBuilder: (context, index) {
           final item = _menuItems[index];
           return ListTile(
-            title: Text(item["name"], style: const TextStyle(color: Colors.white)),
-            subtitle: Text("${item["price"]} kr.",
+            title: Text(item.name, style: const TextStyle(color: Colors.white)),
+            subtitle: Text("${item.price} kr.",
                 style: const TextStyle(color: Colors.white70)),
           );
         },
@@ -96,7 +87,7 @@ class _ChefPageState extends State<ChefPage> {
         onTap: (index) {
           setState(() => _currentIndex = index);
           if (index == 1) {
-            fetchMenu(); // fetch menu when user taps Menu
+            _fetchMenu(); // fetch menu when user taps Menu
           }
         },
       ),
