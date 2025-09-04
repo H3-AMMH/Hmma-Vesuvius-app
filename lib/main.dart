@@ -41,7 +41,10 @@ class MyApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
@@ -75,10 +78,11 @@ class HomePage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(
-                height: 0,
-              ),
+              const SizedBox(height: 0),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 60), // fixed width and height
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -89,8 +93,11 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 60), // fixed width and height
+                ),
                 onPressed: () {
-                   Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const WaiterPage()),
                   );

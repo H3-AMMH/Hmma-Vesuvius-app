@@ -17,3 +17,8 @@
 ### Fixed
 - Changed the architecture to MVVM
 - Splitted the code up more for better structure and overall readability
+
+## [1.2.1] - 2025-09-04
+
+### Fixed
+- Fixed button sizing
