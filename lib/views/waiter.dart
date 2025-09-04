@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../viewmodels/waiter_view_model.dart';
 import '../models/_reservation.dart';
+import '../models/create_reservation.dart';
+import '../widgets/build_reservations.dart';
+import '../widgets/reservation_form.dart';
 
 void main() => runApp(const WaiterApp());
 
 class WaiterApp extends StatelessWidget {
   const WaiterApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,7 +27,6 @@ class WaiterApp extends StatelessWidget {
 
 class WaiterPage extends StatefulWidget {
   const WaiterPage({super.key});
-
   @override
   State<WaiterPage> createState() => _WaiterPageState();
 }
@@ -33,6 +35,18 @@ class _WaiterPageState extends State<WaiterPage> {
   final _viewModel = WaiterViewModel();
   List<Reservation> _reservations = [];
   bool _loading = false;
+  int _currentIndex = 0;
+
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _telController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _timeController = TextEditingController();
+  final _partySizeController = TextEditingController();
+  bool _submitting = false;
+
+  late String _defaultDate;
+  late String _defaultTime;
 
   Future<void> _fetchReservations() async {
     setState(() => _loading = true);
@@ -48,10 +62,83 @@ class _WaiterPageState extends State<WaiterPage> {
     }
   }
 
+  Future<void> _submitReservation() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _submitting = true);
+    try {
+      final reservation = CreateReservation(
+        name: _nameController.text,
+        tel: _telController.text,
+        date: _dateController.text,
+        time: _timeController.text,
+        partySize: int.parse(_partySizeController.text),
+      );
+      final result = await _viewModel.createReservation(reservation);
+      setState(() => _submitting = false);
+      if (!mounted) return;
+      if (result['success'] == true) {
+        String smsMsg = '';
+        if (result.containsKey('sms_error')) {
+          smsMsg = '\n(SMS fejlede: ${result['sms_error']})';
+        } else if (result.containsKey('sms_sid')) {
+          smsMsg = '\n(SMS sendt)';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Reservation created!$smsMsg')),
+        );
+        _nameController.clear();
+        _telController.clear();
+        _dateController.clear();
+        _timeController.clear();
+        _partySizeController.clear();
+        _fetchReservations();
+        setState(() => _currentIndex = 0);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['error'] ?? 'Unknown error')),
+        );
+      }
+    } catch (e) {
+      setState(() => _submitting = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+      debugPrint('Reservation error: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    final now = DateTime.now();
+    _defaultDate = DateFormat('yyyy-MM-dd').format(now);
+    _defaultTime = DateFormat('HH:mm').format(now);
+    _dateController.text = _defaultDate;
+    _timeController.text = _defaultTime;
     _fetchReservations();
+  }
+
+  Widget _buildBody() {
+    if (_currentIndex == 0) {
+      return buildReservations(
+        loading: _loading,
+        reservations: _reservations,
+      );
+    } else if (_currentIndex == 1) {
+      return ReservationForm(
+        formKey: _formKey,
+        nameController: _nameController,
+        telController: _telController,
+        dateController: _dateController,
+        timeController: _timeController,
+        partySizeController: _partySizeController,
+        submitting: _submitting,
+        onSubmit: _submitReservation,
+      );
+    } else {
+      return const Center(child: Text("Innstillingssiden", style: TextStyle(color: Colors.white)));
+    }
   }
 
   @override
@@ -59,50 +146,27 @@ class _WaiterPageState extends State<WaiterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Café Vesuvius - Tjener'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _fetchReservations,
-          )
-        ],
+        actions: _currentIndex == 0
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _fetchReservations,
+                )
+              ]
+            : null,
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _reservations.isEmpty
-              ? const Center(child: Text("Ingen reservationer i dag", style: TextStyle(color: Colors.white)))
-              : ListView.builder(
-                  itemCount: _reservations.length,
-                  itemBuilder: (context, index) {
-                    final res = _reservations[index];
-                    return ReservationCard(reservation: res);
-                  },
-                ),
-    );
-  }
-}
-
-class ReservationCard extends StatelessWidget {
-  final Reservation reservation;
-  const ReservationCard({required this.reservation, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey[900],
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: ListTile(
-        title: Text(reservation.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Telefon: ${reservation.tel}", style: const TextStyle(color: Colors.white70)),
-            Text("Tid: ${reservation.time}", style: const TextStyle(color: Colors.white70)),
-            Text("Antal personer: ${reservation.partySize}", style: const TextStyle(color: Colors.white70)),
-            Text("Borde nødvendige: ${reservation.tablesNeeded}", style: const TextStyle(color: Colors.white70)),
-            Text("Status: ${reservation.status}", style: const TextStyle(color: Colors.white70)),
-          ],
-        ),
-        isThreeLine: true,
+      body: _buildBody(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Reservationer'),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Opret'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Innstillinger'),
+        ],
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+          if (index == 0) _fetchReservations();
+        },
       ),
     );
   }

@@ -22,3 +22,8 @@
 
 ### Fixed
 - Fixed button sizing
+
+## [1.3.0] - 2025-09-04
+
+### Added
+- Create reservation in App using api endpoint
