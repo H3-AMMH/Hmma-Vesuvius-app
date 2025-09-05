@@ -1,4 +1,5 @@
 class Reservation {
+  final int? id;
   final String name;
   final String tel;
   final String time;
@@ -7,6 +8,7 @@ class Reservation {
   final String status;
 
   Reservation({
+    this.id,
     required this.name,
     required this.tel,
     required this.time,
@@ -17,6 +19,7 @@ class Reservation {
 
   factory Reservation.fromJson(Map<String, dynamic> json) {
     return Reservation(
+      id: json['id'],
       name: json['name'],
       tel: json['tel'],
       time: json['time'],
