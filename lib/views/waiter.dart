@@ -8,15 +8,14 @@ import '../widgets/reservation_form.dart';
 
 class WaiterApp extends StatelessWidget {
   const WaiterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Café Vesuvius - Tjener',
       theme: Theme.of(context).copyWith(
         scaffoldBackgroundColor: const Color(0xFF000000),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.brown,
-        ),
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.brown),
       ),
       home: const WaiterPage(),
     );
@@ -25,6 +24,7 @@ class WaiterApp extends StatelessWidget {
 
 class WaiterPage extends StatefulWidget {
   const WaiterPage({super.key});
+
   @override
   State<WaiterPage> createState() => _WaiterPageState();
 }
@@ -34,7 +34,6 @@ class _WaiterPageState extends State<WaiterPage> {
   List<Reservation> _reservations = [];
   bool _loading = false;
   int _currentIndex = 0;
-
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _telController = TextEditingController();
@@ -42,7 +41,6 @@ class _WaiterPageState extends State<WaiterPage> {
   final _timeController = TextEditingController();
   final _partySizeController = TextEditingController();
   bool _submitting = false;
-
   late String _defaultDate;
   late String _defaultTime;
 
@@ -81,9 +79,9 @@ class _WaiterPageState extends State<WaiterPage> {
         } else if (result.containsKey('sms_sid')) {
           smsMsg = '\n(SMS sendt)';
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Reservation created!$smsMsg')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Reservation created!$smsMsg')));
         _nameController.clear();
         _telController.clear();
         _dateController.clear();
@@ -99,9 +97,9 @@ class _WaiterPageState extends State<WaiterPage> {
     } catch (e) {
       setState(() => _submitting = false);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       debugPrint('Reservation error: $e');
     }
   }
@@ -122,6 +120,7 @@ class _WaiterPageState extends State<WaiterPage> {
       return buildReservations(
         loading: _loading,
         reservations: _reservations,
+        onReorder: _onReorder, // Pass the callback here
       );
     } else if (_currentIndex == 1) {
       return ReservationForm(
@@ -135,7 +134,9 @@ class _WaiterPageState extends State<WaiterPage> {
         onSubmit: _submitReservation,
       );
     } else {
-      return const Center(child: Text("Indstillingssiden", style: TextStyle(color: Colors.white)));
+      return const Center(
+        child: Text("Indstillinger", style: TextStyle(color: Colors.white)),
+      );
     }
   }
 
@@ -149,7 +150,7 @@ class _WaiterPageState extends State<WaiterPage> {
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: _fetchReservations,
-                )
+                ),
               ]
             : null,
       ),
@@ -157,9 +158,15 @@ class _WaiterPageState extends State<WaiterPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Reservationer'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Reservationer',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Opret'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Indstillinger'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Indstillinger',
+          ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
@@ -167,5 +174,15 @@ class _WaiterPageState extends State<WaiterPage> {
         },
       ),
     );
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final Reservation item = _reservations.removeAt(oldIndex);
+      _reservations.insert(newIndex, item);
+    });
   }
 }

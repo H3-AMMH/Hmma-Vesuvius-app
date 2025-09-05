@@ -9,9 +9,9 @@ class ChefApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Café Vesuvius - Chef',
-      theme: Theme.of(context).copyWith(
-        scaffoldBackgroundColor: const Color(0xFF000000),
-      ),
+      theme: Theme.of(
+        context,
+      ).copyWith(scaffoldBackgroundColor: const Color(0xFF000000)),
       home: const ChefPage(),
     );
   }
@@ -60,13 +60,15 @@ class _ChefPageState extends State<ChefPage> {
           final item = _menuItems[index];
           return ListTile(
             title: Text(item.name, style: const TextStyle(color: Colors.white)),
-            subtitle: Text("${item.price} kr.",
-                style: const TextStyle(color: Colors.white70)),
+            subtitle: Text(
+              "${item.price} kr.",
+              style: const TextStyle(color: Colors.white70),
+            ),
           );
         },
       );
     } else {
-      return const Center(child: Text("Indstillingssiden"));
+      return const Center(child: Text("Indstillinger"));
     }
   }
 
