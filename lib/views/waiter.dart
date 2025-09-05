@@ -137,7 +137,7 @@ class _WaiterPageState extends State<WaiterPage> {
       );
     } else {
       return const Center(
-        child: Text("Innstillingssiden", style: TextStyle(color: Colors.white)),
+        child: Text("Indstillingssiden", style: TextStyle(color: Colors.white)),
       );
     }
   }
@@ -167,7 +167,7 @@ class _WaiterPageState extends State<WaiterPage> {
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Opret'),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Innstillinger',
+            label: 'Indstillinger',
           ),
         ],
         onTap: (index) {

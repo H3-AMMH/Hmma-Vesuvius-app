@@ -11,9 +11,9 @@ class ChefApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Café Vesuvius - Chef',
-      theme: Theme.of(context).copyWith(
-        scaffoldBackgroundColor: const Color(0xFF000000),
-      ),
+      theme: Theme.of(
+        context,
+      ).copyWith(scaffoldBackgroundColor: const Color(0xFF000000)),
       home: const ChefPage(),
     );
   }
@@ -62,13 +62,15 @@ class _ChefPageState extends State<ChefPage> {
           final item = _menuItems[index];
           return ListTile(
             title: Text(item.name, style: const TextStyle(color: Colors.white)),
-            subtitle: Text("${item.price} kr.",
-                style: const TextStyle(color: Colors.white70)),
+            subtitle: Text(
+              "${item.price} kr.",
+              style: const TextStyle(color: Colors.white70),
+            ),
           );
         },
       );
     } else {
-      return const Center(child: Text("Innstillingssiden"));
+      return const Center(child: Text("Indstillingssiden"));
     }
   }
 
@@ -82,7 +84,10 @@ class _ChefPageState extends State<ChefPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hjem'),
           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Innstillinger'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Indstillinger',
+          ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);

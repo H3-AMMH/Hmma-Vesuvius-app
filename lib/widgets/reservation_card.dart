@@ -3,8 +3,13 @@ import '../models/_reservation.dart';
 
 class ReservationCard extends StatelessWidget {
   final Reservation reservation;
+  final int index;
 
-  const ReservationCard({required this.reservation, super.key});
+  const ReservationCard({
+    required this.reservation,
+    required this.index,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +17,10 @@ class ReservationCard extends StatelessWidget {
       color: Colors.grey[900],
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: ListTile(
-        leading: const Icon(Icons.drag_handle, color: Colors.white70),
+        leading: ReorderableDragStartListener(
+          index: index,
+          child: const Icon(Icons.drag_handle, color: Colors.white70),
+        ),
         title: Text(
           reservation.name,
           style: const TextStyle(
@@ -71,8 +79,8 @@ Widget buildReservations({
           itemBuilder: (context, index) {
             final res = reservations[index];
             return Dismissible(
-              key: Key('${res.id}'),
-              child: ReservationCard(reservation: res),
+              key: Key('${res.id ?? index}'),
+              child: ReservationCard(reservation: res, index: index),
             );
           },
           onReorder: onReorder,

@@ -23,7 +23,7 @@ Widget buildReservations({
             final res = reservations[index];
             return Dismissible(
               key: Key('${res.id ?? index}'),
-              child: ReservationCard(reservation: res),
+              child: ReservationCard(reservation: res, index: index),
             );
           },
           onReorder: onReorder,
