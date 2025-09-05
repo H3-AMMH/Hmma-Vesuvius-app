@@ -70,7 +70,7 @@ class _ChefPageState extends State<ChefPage> {
         },
       );
     } else {
-      return const Center(child: Text("Indstillingssiden"));
+      return const Center(child: Text("Indstillinger"));
     }
   }
 

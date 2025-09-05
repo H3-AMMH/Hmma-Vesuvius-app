@@ -137,7 +137,7 @@ class _WaiterPageState extends State<WaiterPage> {
       );
     } else {
       return const Center(
-        child: Text("Indstillingssiden", style: TextStyle(color: Colors.white)),
+        child: Text("Indstillinger", style: TextStyle(color: Colors.white)),
       );
     }
   }
