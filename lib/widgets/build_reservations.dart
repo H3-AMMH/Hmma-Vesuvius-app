@@ -21,9 +21,10 @@ Widget buildReservations({
           itemCount: reservations.length,
           itemBuilder: (context, index) {
             final res = reservations[index];
-            return Dismissible(
+            return ReservationCard(
               key: Key('${res.id ?? index}'),
-              child: ReservationCard(reservation: res, index: index),
+              reservation: res,
+              index: index,
             );
           },
           onReorder: onReorder,

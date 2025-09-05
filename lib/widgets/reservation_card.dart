@@ -19,7 +19,17 @@ class ReservationCard extends StatelessWidget {
       child: ListTile(
         leading: ReorderableDragStartListener(
           index: index,
-          child: const Icon(Icons.drag_handle, color: Colors.white70),
+          child: Container(
+            height: 200,
+            width: 75,
+            alignment: Alignment.center,
+            color: Colors.transparent,
+            child: const Icon(
+              Icons.drag_handle,
+              color: Colors.white70,
+              size: 50,
+            ),
+          ),
         ),
         title: Text(
           reservation.name,
