@@ -27,3 +27,8 @@
 
 ### Added
 - Create reservation in App using api endpoint
+
+## [1.3.1] - 2025-09-05
+
+### Fixed
+- Made some small changes like making an .env file for storing api base url. Removed main function on chefpage and waiterspage. Now its instantiated through navigation from the main app.

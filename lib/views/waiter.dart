@@ -6,8 +6,6 @@ import '../models/create_reservation.dart';
 import '../widgets/build_reservations.dart';
 import '../widgets/reservation_form.dart';
 
-void main() => runApp(const WaiterApp());
-
 class WaiterApp extends StatelessWidget {
   const WaiterApp({super.key});
 

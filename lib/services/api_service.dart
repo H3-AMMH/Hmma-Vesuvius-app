@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/io_client.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
-  static final _baseUrl = "https://10.130.54.40:5000/api";
+  static String get _baseUrl => dotenv.env['API_BASE_URL'] ?? "";
 
   static IOClient _client() {
     final ioc = HttpClient()

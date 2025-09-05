@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../viewmodels/chef_view_model.dart';
 import '../models/menu_item.dart';
 
-void main() => runApp(const ChefApp());
-
 class ChefApp extends StatelessWidget {
   const ChefApp({super.key});
 
@@ -54,7 +52,7 @@ class _ChefPageState extends State<ChefPage> {
         return const Center(child: CircularProgressIndicator());
       }
       if (_menuItems.isEmpty) {
-        return const Center(child: Text("No menu items found"));
+        return const Center(child: Text("Ingen retter fundet"));
       }
       return ListView.builder(
         itemCount: _menuItems.length,
@@ -84,10 +82,7 @@ class _ChefPageState extends State<ChefPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hjem'),
           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Indstillinger',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Indstillinger'),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);

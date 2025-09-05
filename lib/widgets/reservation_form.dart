@@ -99,7 +99,6 @@ class ReservationForm extends StatelessWidget {
                 );
                 if (!context.mounted) return;
                 if (picked != null) {
-                  timeController.text = picked.format(context);
                   final dt = DateFormat.jm().parse(picked.format(context));
                   timeController.text = DateFormat('HH:mm').format(dt);
                 }
