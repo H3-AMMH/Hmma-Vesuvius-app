@@ -66,7 +66,7 @@ class _ChefPageState extends State<ChefPage> {
         },
       );
     } else {
-      return const Center(child: Text("Innstillingssiden"));
+      return const Center(child: Text("Indstillingssiden"));
     }
   }
 
@@ -80,7 +80,7 @@ class _ChefPageState extends State<ChefPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hjem'),
           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Innstillinger'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Indstillinger'),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);

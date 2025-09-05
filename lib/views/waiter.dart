@@ -135,7 +135,7 @@ class _WaiterPageState extends State<WaiterPage> {
         onSubmit: _submitReservation,
       );
     } else {
-      return const Center(child: Text("Innstillingssiden", style: TextStyle(color: Colors.white)));
+      return const Center(child: Text("Indstillingssiden", style: TextStyle(color: Colors.white)));
     }
   }
 
@@ -159,7 +159,7 @@ class _WaiterPageState extends State<WaiterPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Reservationer'),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Opret'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Innstillinger'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Indstillinger'),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
