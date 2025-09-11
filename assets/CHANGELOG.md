@@ -32,3 +32,9 @@
 
 ### Fixed
 - Made some small changes like making an .env file for storing api base url. Removed main function on chefpage and waiterspage. Now its instantiated through navigation from the main app.
+
+## [1.3.2] - 2025-09-10
+
+### Fixed
+- Changed the time format from am/pm to 24 hour.
+- Changed the model for the time picker to include 24 hour time.
