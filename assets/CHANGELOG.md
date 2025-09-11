@@ -36,5 +36,5 @@
 ## [1.3.2] - 2025-09-10
 
 ### Fixed
-- Chanced the time format from am/pm to 24 hour.
-- Chanced the model for the time picker to include 24 hour time.
+- Changed the time format from am/pm to 24 hour.
+- Changed the model for the time picker to include 24 hour time.
