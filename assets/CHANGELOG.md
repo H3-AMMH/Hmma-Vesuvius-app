@@ -32,3 +32,11 @@
 
 ### Fixed
 - Made some small changes like making an .env file for storing api base url. Removed main function on chefpage and waiterspage. Now its instantiated through navigation from the main app.
+
+## [1.3.2] - 2025-09-15
+
+### Added
+- Added unit test to the app + github workflow.
+
+### Fixed
+- Made small changes to api_service.dart
