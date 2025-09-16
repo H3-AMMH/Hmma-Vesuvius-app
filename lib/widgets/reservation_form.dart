@@ -31,17 +31,30 @@ class ReservationForm extends StatelessWidget {
         key: formKey,
         child: ListView(
           children: [
-            const Text('Opret reservation', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+            const Text(
+              'Opret reservation',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             const SizedBox(height: 16),
             TextFormField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Navn', labelStyle: TextStyle(color: Colors.white)),
+              decoration: const InputDecoration(
+                labelText: 'Navn',
+                labelStyle: TextStyle(color: Colors.white),
+              ),
               style: const TextStyle(color: Colors.white),
               validator: (v) => v == null || v.isEmpty ? 'Påkrævet' : null,
             ),
             TextFormField(
               controller: telController,
-              decoration: const InputDecoration(labelText: 'Telefon', labelStyle: TextStyle(color: Colors.white)),
+              decoration: const InputDecoration(
+                labelText: 'Telefon',
+                labelStyle: TextStyle(color: Colors.white),
+              ),
               style: const TextStyle(color: Colors.white),
               validator: (v) => v == null || v.isEmpty ? 'Påkrævet' : null,
             ),
@@ -49,7 +62,8 @@ class ReservationForm extends StatelessWidget {
               onTap: () async {
                 final picked = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.tryParse(dateController.text) ?? DateTime.now(),
+                  initialDate:
+                      DateTime.tryParse(dateController.text) ?? DateTime.now(),
                   firstDate: DateTime.now(),
                   lastDate: DateTime.now().add(const Duration(days: 365)),
                   builder: (context, child) => Theme(
@@ -71,7 +85,10 @@ class ReservationForm extends StatelessWidget {
               child: AbsorbPointer(
                 child: TextFormField(
                   controller: dateController,
-                  decoration: const InputDecoration(labelText: 'Dato (YYYY-MM-DD)', labelStyle: TextStyle(color: Colors.white)),
+                  decoration: const InputDecoration(
+                    labelText: 'Dato (YYYY-MM-DD)',
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
                   style: const TextStyle(color: Colors.white),
                   validator: (v) => v == null || v.isEmpty ? 'Påkrævet' : null,
                 ),
@@ -80,33 +97,44 @@ class ReservationForm extends StatelessWidget {
             GestureDetector(
               onTap: () async {
                 final initialTime = TimeOfDay.fromDateTime(
-                  DateTime.tryParse('1970-01-01 ${timeController.text}') ?? DateTime.now(),
+                  DateTime.tryParse('1970-01-01 ${timeController.text}') ??
+                      DateTime.now(),
                 );
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: initialTime,
-                  builder: (context, child) => Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.dark(
-                        primary: Colors.brown,
-                        onPrimary: Colors.white,
-                        surface: Colors.black,
-                        onSurface: Colors.white,
+                  builder: (context, child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(
+                        context,
+                      ).copyWith(alwaysUse24HourFormat: true),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.dark(
+                            primary: Colors.brown,
+                            onPrimary: Colors.white,
+                            surface: Colors.black,
+                            onSurface: Colors.white,
+                          ),
+                        ),
+                        child: child!,
                       ),
-                    ),
-                    child: child!,
-                  ),
+                    );
+                  },
                 );
                 if (!context.mounted) return;
                 if (picked != null) {
-                  final dt = DateFormat.jm().parse(picked.format(context));
+                  final dt = DateTime(1970, 1, 1, picked.hour, picked.minute);
                   timeController.text = DateFormat('HH:mm').format(dt);
                 }
               },
               child: AbsorbPointer(
                 child: TextFormField(
                   controller: timeController,
-                  decoration: const InputDecoration(labelText: 'Tid (HH:MM)', labelStyle: TextStyle(color: Colors.white)),
+                  decoration: const InputDecoration(
+                    labelText: 'Tid',
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
                   style: const TextStyle(color: Colors.white),
                   validator: (v) => v == null || v.isEmpty ? 'Påkrævet' : null,
                 ),
@@ -114,7 +142,10 @@ class ReservationForm extends StatelessWidget {
             ),
             TextFormField(
               controller: partySizeController,
-              decoration: const InputDecoration(labelText: 'Antal personer', labelStyle: TextStyle(color: Colors.white)),
+              decoration: const InputDecoration(
+                labelText: 'Antal personer',
+                labelStyle: TextStyle(color: Colors.white),
+              ),
               style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.number,
               validator: (v) {
@@ -127,7 +158,9 @@ class ReservationForm extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: submitting ? null : onSubmit,
-              child: submitting ? const CircularProgressIndicator() : const Text('Opret reservation'),
+              child: submitting
+                  ? const CircularProgressIndicator()
+                  : const Text('Opret reservation'),
             ),
           ],
         ),
