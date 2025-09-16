@@ -35,6 +35,9 @@ class _WaiterPageState extends State<WaiterPage> {
   bool _loading = false;
   int _currentIndex = 0;
 
+  // Add: 0 = today, 1 = all upcoming
+  int _reservationTabIndex = 0;
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _telController = TextEditingController();
@@ -49,7 +52,9 @@ class _WaiterPageState extends State<WaiterPage> {
   Future<void> _fetchReservations() async {
     setState(() => _loading = true);
     try {
-      final reservations = await _viewModel.fetchReservations();
+      final reservations = await _viewModel.fetchReservations(
+        future: _reservationTabIndex == 1,
+      );
       setState(() {
         _reservations = reservations;
         _loading = false;
@@ -117,11 +122,58 @@ class _WaiterPageState extends State<WaiterPage> {
     _fetchReservations();
   }
 
+  Widget _buildReservationsTabBar() {
+    return Container(
+      color: Colors.brown[800],
+      child: Row(
+        children: [
+          Expanded(
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: _reservationTabIndex == 0 ? Colors.white : Colors.white70,
+                backgroundColor: _reservationTabIndex == 0 ? Colors.brown : Colors.transparent,
+              ),
+              onPressed: () {
+                if (_reservationTabIndex != 0) {
+                  setState(() => _reservationTabIndex = 0);
+                  _fetchReservations();
+                }
+              },
+              child: const Text("I dag"),
+            ),
+          ),
+          Expanded(
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: _reservationTabIndex == 1 ? Colors.white : Colors.white70,
+                backgroundColor: _reservationTabIndex == 1 ? Colors.brown : Colors.transparent,
+              ),
+              onPressed: () {
+                if (_reservationTabIndex != 1) {
+                  setState(() => _reservationTabIndex = 1);
+                  _fetchReservations();
+                }
+              },
+              child: const Text("Alle fremtidige"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBody() {
     if (_currentIndex == 0) {
-      return buildReservations(
-        loading: _loading,
-        reservations: _reservations,
+      return Column(
+        children: [
+          _buildReservationsTabBar(),
+          Expanded(
+            child: buildReservations(
+              loading: _loading,
+              reservations: _reservations,
+            ),
+          ),
+        ],
       );
     } else if (_currentIndex == 1) {
       return ReservationForm(

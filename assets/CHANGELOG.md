@@ -40,3 +40,11 @@
 
 ### Fixed
 - Made small changes to api_service.dart
+
+## [1.3.3] - 2025-09-16
+
+### Added
+- Tab bar in the waiter view to switch between today's reservations and future reservations.
+
+### Fixed
+- .env file is included in the assets folder now.

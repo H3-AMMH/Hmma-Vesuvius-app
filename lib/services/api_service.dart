@@ -20,8 +20,14 @@ class ApiService {
     throw Exception("Failed to fetch menu: ${response.statusCode}");
   }
 
-  static Future<List<dynamic>> fetchReservations() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/reservations"));
+  static Future<List<dynamic>> fetchReservations({String? date, bool future = false}) async {
+    String url = "$_baseUrl/reservations";
+    if (future) {
+      url += "?future=true";
+    } else if (date != null) {
+      url += "?date=$date";
+    }
+    final response = await _client().get(Uri.parse(url));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
