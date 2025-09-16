@@ -15,4 +15,8 @@ jobs:
         with:
           flutter-version: '3.35.3'
       - run: flutter pub get
+      - name: Create dummy .env file
+        run: |
+          mkdir -p assets
+          echo "API_BASE_URL=https://dummy-url" > assets/.env
       - run: flutter test
