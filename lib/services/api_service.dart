@@ -12,15 +12,13 @@ class ApiService {
     return IOClient(ioc);
   }
 
-
   static Future<List<dynamic>> fetchMenu() async {
     final response = await _client().get(Uri.parse("$_baseUrl/menu"));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Fejlede at hente menu ${response.statusCode}");
+    throw Exception("Failed to fetch menu: ${response.statusCode}");
   }
-
 
   static Future<List<dynamic>> fetchReservations({String? date, bool future = false}) async {
     String url = "$_baseUrl/reservations";
@@ -36,40 +34,15 @@ class ApiService {
     throw Exception("Failed to fetch reservations: ${response.statusCode}");
   }
 
-  // --- Orders ---
-  static Future<List<dynamic>> fetchOrders() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/orders"));
-    if (response.statusCode == 200) {
+  static Future<Map<String, dynamic>> createReservation(Map<String, dynamic> reservation) async {
+    final response = await _client().post(
+      Uri.parse("$_baseUrl/reservations"),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(reservation),
+    );
+    if (response.statusCode == 201) {
       return json.decode(response.body);
     }
-    throw Exception("Fejlede at hente orders: ${response.statusCode}");
-  }
-
-  static Future<Map<String, dynamic>> createOrder(
-    Map<String, dynamic> order,
-  ) async {
-    final response = await _client().post(
-      Uri.parse("$_baseUrl/orders"),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(order),
-    );
-    return json.decode(response.body);
-  }
-
-  static Future<Map<String, dynamic>> updateOrder(
-    int id,
-    Map<String, dynamic> order,
-  ) async {
-    final response = await _client().patch(
-      Uri.parse("$_baseUrl/orders/$id"),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(order),
-    );
-    return json.decode(response.body);
-  }
-
-  static Future<Map<String, dynamic>> deleteOrder(int id) async {
-    final response = await _client().delete(Uri.parse("$_baseUrl/orders/$id"));
     return json.decode(response.body);
   }
 }
