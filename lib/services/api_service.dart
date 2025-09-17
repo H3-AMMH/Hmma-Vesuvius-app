@@ -18,7 +18,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Failed to fetch menu: ${response.statusCode}");
+    throw Exception("Fejlede at hente menu ${response.statusCode}");
   }
 
 
@@ -42,7 +42,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Failed to fetch orders: ${response.statusCode}");
+    throw Exception("Fejlede at hente orders: ${response.statusCode}");
   }
 
   static Future<Map<String, dynamic>> createOrder(
@@ -53,9 +53,6 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: json.encode(order),
     );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return json.decode(response.body);
-    }
     return json.decode(response.body);
   }
 
@@ -68,17 +65,11 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: json.encode(order),
     );
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    }
     return json.decode(response.body);
   }
 
   static Future<Map<String, dynamic>> deleteOrder(int id) async {
     final response = await _client().delete(Uri.parse("$_baseUrl/orders/$id"));
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    }
     return json.decode(response.body);
   }
 }
