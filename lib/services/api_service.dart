@@ -18,7 +18,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Failed to fetch menu: ${response.statusCode}");
+    throw Exception("Fejlede at hente menu ${response.statusCode}");
   }
 
   static Future<List<dynamic>> fetchReservations({String? date, bool future = false}) async {
@@ -52,7 +52,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Failed to fetch orders: ${response.statusCode}");
+    throw Exception("Fejlede at hente orders: ${response.statusCode}");
   }
 
   static Future<List<dynamic>> fetchOrderLines(int orderId) async {
