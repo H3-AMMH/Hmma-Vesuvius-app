@@ -38,3 +38,19 @@
 ### Fixed
 - Changed the time format from am/pm to 24 hour.
 - Changed the model for the time picker to include 24 hour time.
+
+## [1.3.3] - 2025-09-15
+
+### Added
+- Added unit test to the app + github workflow.
+
+### Fixed
+- Made small changes to api_service.dart
+
+## [1.3.4] - 2025-09-16
+
+### Added
+- Tab bar in the waiter view to switch between today's reservations and future reservations.
+
+### Fixed
+- .env file is included in the assets folder now.
