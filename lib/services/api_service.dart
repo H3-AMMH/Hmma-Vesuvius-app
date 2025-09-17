@@ -18,7 +18,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Fejlede at hente menu ${response.statusCode}");
+    throw Exception("Failed to fetch menu: ${response.statusCode}");
   }
 
   static Future<List<dynamic>> fetchReservations({String? date, bool future = false}) async {
@@ -73,7 +73,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> createOrder(int reservationId) async {
     final response = await _client().post(
-      Uri.parse("$_baseUrl/orders"),
+      Uri.parse("$_baseUrl/reservations"),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'reservation_id': reservationId}),
     );
