@@ -34,7 +34,6 @@ class ApiService {
     throw Exception("Failed to fetch reservations: ${response.statusCode}");
   }
 
-
   static Future<Map<String, dynamic>> createReservation(Map<String, dynamic> reservation) async {
     final response = await _client().post(
       Uri.parse("$_baseUrl/reservations"),
