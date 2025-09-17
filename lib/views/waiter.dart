@@ -88,9 +88,6 @@ class _WaiterPageState extends State<WaiterPage> {
         ).showSnackBar(SnackBar(content: Text('Reservation created!$smsMsg')));
         _nameController.clear();
         _telController.clear();
-        //_dateController.clear();
-        //_timeController.clear();
-        //_timeController.text = DateFormat('HH:mm').format(DateTime.now());
         _partySizeController.text = "1";
         _fetchReservations();
         setState(() => _currentIndex = 0);
@@ -113,7 +110,6 @@ class _WaiterPageState extends State<WaiterPage> {
   void initState() {
     super.initState();
     _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    //_timeController.text = DateFormat('HH:mm').format(DateTime.now());
     _partySizeController.text = "1";
     _fetchReservations();
   }
@@ -126,8 +122,12 @@ class _WaiterPageState extends State<WaiterPage> {
           Expanded(
             child: TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 0 ? Colors.white : Colors.white70,
-                backgroundColor: _reservationTabIndex == 0 ? Colors.brown : Colors.transparent,
+                foregroundColor: _reservationTabIndex == 0
+                    ? Colors.white
+                    : Colors.white70,
+                backgroundColor: _reservationTabIndex == 0
+                    ? Colors.brown
+                    : Colors.transparent,
               ),
               onPressed: () {
                 if (_reservationTabIndex != 0) {
@@ -141,8 +141,12 @@ class _WaiterPageState extends State<WaiterPage> {
           Expanded(
             child: TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 1 ? Colors.white : Colors.white70,
-                backgroundColor: _reservationTabIndex == 1 ? Colors.brown : Colors.transparent,
+                foregroundColor: _reservationTabIndex == 1
+                    ? Colors.white
+                    : Colors.white70,
+                backgroundColor: _reservationTabIndex == 1
+                    ? Colors.brown
+                    : Colors.transparent,
               ),
               onPressed: () {
                 if (_reservationTabIndex != 1) {
