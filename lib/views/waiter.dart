@@ -45,8 +45,6 @@ class _WaiterPageState extends State<WaiterPage> {
   final _timeController = TextEditingController();
   final _partySizeController = TextEditingController();
   bool _submitting = false;
-  late String _defaultDate;
-  late String _defaultTime;
 
   Future<void> _fetchReservations() async {
     setState(() => _loading = true);
@@ -90,9 +88,7 @@ class _WaiterPageState extends State<WaiterPage> {
         ).showSnackBar(SnackBar(content: Text('Reservation created!$smsMsg')));
         _nameController.clear();
         _telController.clear();
-        _dateController.clear();
-        _timeController.clear();
-        _partySizeController.clear();
+        _partySizeController.text = "1";
         _fetchReservations();
         setState(() => _currentIndex = 0);
       } else {
@@ -113,11 +109,8 @@ class _WaiterPageState extends State<WaiterPage> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _defaultDate = DateFormat('yyyy-MM-dd').format(now);
-    _defaultTime = DateFormat('HH:mm').format(now);
-    _dateController.text = _defaultDate;
-    _timeController.text = _defaultTime;
+    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _partySizeController.text = "1";
     _fetchReservations();
   }
 
@@ -129,8 +122,12 @@ class _WaiterPageState extends State<WaiterPage> {
           Expanded(
             child: TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 0 ? Colors.white : Colors.white70,
-                backgroundColor: _reservationTabIndex == 0 ? Colors.brown : Colors.transparent,
+                foregroundColor: _reservationTabIndex == 0
+                    ? Colors.white
+                    : Colors.white70,
+                backgroundColor: _reservationTabIndex == 0
+                    ? Colors.brown
+                    : Colors.transparent,
               ),
               onPressed: () {
                 if (_reservationTabIndex != 0) {
@@ -144,8 +141,12 @@ class _WaiterPageState extends State<WaiterPage> {
           Expanded(
             child: TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 1 ? Colors.white : Colors.white70,
-                backgroundColor: _reservationTabIndex == 1 ? Colors.brown : Colors.transparent,
+                foregroundColor: _reservationTabIndex == 1
+                    ? Colors.white
+                    : Colors.white70,
+                backgroundColor: _reservationTabIndex == 1
+                    ? Colors.brown
+                    : Colors.transparent,
               ),
               onPressed: () {
                 if (_reservationTabIndex != 1) {
@@ -163,19 +164,13 @@ class _WaiterPageState extends State<WaiterPage> {
 
   Widget _buildBody() {
     if (_currentIndex == 0) {
-      return Column(
-        children: [
-          _buildReservationsTabBar(),
-          Expanded(
-            child: buildReservations(
-              loading: _loading,
-              reservations: _reservations,
-              onReorder: _onReorder,
-            ),
-          ),
-        ],
+      return buildReservations(
+        loading: _loading,
+        reservations: _reservations,
+        onReorder: _onReorder,
       );
     } else if (_currentIndex == 1) {
+      _timeController.text = DateFormat('HH:mm').format(DateTime.now());
       return ReservationForm(
         formKey: _formKey,
         nameController: _nameController,
@@ -188,7 +183,7 @@ class _WaiterPageState extends State<WaiterPage> {
       );
     } else {
       return const Center(
-        child: Text("Indstillinger", style: TextStyle(color: Colors.white)),
+        child: Text("Opret ordrer", style: TextStyle(color: Colors.white)),
       );
     }
   }
@@ -215,10 +210,13 @@ class _WaiterPageState extends State<WaiterPage> {
             icon: Icon(Icons.list),
             label: 'Reservationer',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Opret'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Indstillinger',
+            icon: Icon(Icons.add),
+            label: 'Opret reservation',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: 'Opret ordrer',
           ),
         ],
         onTap: (index) {
