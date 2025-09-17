@@ -103,8 +103,8 @@ class _WaiterPageState extends State<WaiterPage> {
         _nameController.clear();
         _telController.clear();
         //_dateController.clear();
-        _timeController.clear();
-        _timeController.text = DateFormat('HH:mm').format(DateTime.now());
+        //_timeController.clear();
+        //_timeController.text = DateFormat('HH:mm').format(DateTime.now());
         _partySizeController.text = "1";
         _fetchReservations();
         setState(() => _currentIndex = 0);
@@ -185,9 +185,8 @@ class _WaiterPageState extends State<WaiterPage> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _dateController.text = DateFormat('yyyy-MM-dd').format(now);
-    _timeController.text = DateFormat('HH:mm').format(now);
+    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    //_timeController.text = DateFormat('HH:mm').format(DateTime.now());
     _partySizeController.text = "1";
     _fetchReservations();
     _fetchMenuAndCategories();
@@ -207,6 +206,7 @@ class _WaiterPageState extends State<WaiterPage> {
         onRefresh: _fetchReservations,
       );
     } else if (_currentIndex == 1) {
+      _timeController.text = DateFormat('HH:mm').format(DateTime.now());
       return ReservationForm(
         formKey: _formKey,
         nameController: _nameController,
