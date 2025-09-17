@@ -6,6 +6,8 @@ class ReservationCard extends StatelessWidget {
   final int index;
   final Widget? trailing;
 
+
+
   const ReservationCard({
     required this.reservation,
     required this.index,
@@ -26,11 +28,7 @@ class ReservationCard extends StatelessWidget {
             width: 75,
             alignment: Alignment.center,
             color: Colors.transparent,
-            child: const Icon(
-              Icons.drag_handle,
-              color: Colors.white70,
-              size: 50,
-            ),
+            child: const Icon(Icons.reorder, color: Colors.white70, size: 50),
           ),
         ),
         title: Text(

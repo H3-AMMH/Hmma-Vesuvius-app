@@ -102,9 +102,10 @@ class _WaiterPageState extends State<WaiterPage> {
         ).showSnackBar(SnackBar(content: Text('Reservation created!$smsMsg')));
         _nameController.clear();
         _telController.clear();
-        _dateController.clear();
+        //_dateController.clear();
         _timeController.clear();
-        _partySizeController.clear();
+        _timeController.text = DateFormat('HH:mm').format(DateTime.now());
+        _partySizeController.text = "1";
         _fetchReservations();
         setState(() => _currentIndex = 0);
       } else {
@@ -185,10 +186,9 @@ class _WaiterPageState extends State<WaiterPage> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _defaultDate = DateFormat('yyyy-MM-dd').format(now);
-    _defaultTime = DateFormat('HH:mm').format(now);
-    _dateController.text = _defaultDate;
-    _timeController.text = _defaultTime;
+    _dateController.text = DateFormat('yyyy-MM-dd').format(now);
+    _timeController.text = DateFormat('HH:mm').format(now);
+    _partySizeController.text = "1";
     _fetchReservations();
     _fetchMenuAndCategories();
   }
@@ -262,7 +262,7 @@ class _WaiterPageState extends State<WaiterPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
-            label: 'Opret',
+            label: 'Opret reservation',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),

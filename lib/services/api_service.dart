@@ -12,6 +12,7 @@ class ApiService {
     return IOClient(ioc);
   }
 
+  // --- Menu ---
   static Future<List<dynamic>> fetchMenu() async {
     final response = await _client().get(Uri.parse("$_baseUrl/menu"));
     if (response.statusCode == 200) {
