@@ -54,3 +54,10 @@
 
 ### Fixed
 - .env file is included in the assets folder now.
+
+## [1.4.0] - 2025-09-18
+
+### Changed
+- Refactored waiter view to follow MVVM.
+- Splitted the code into smaller widgets reservations and order tabs.
+- Added unit-test for creating order.

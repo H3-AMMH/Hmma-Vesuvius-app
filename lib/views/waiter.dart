@@ -3,8 +3,11 @@ import 'package:intl/intl.dart';
 import '../viewmodels/waiter_view_model.dart';
 import '../models/_reservation.dart';
 import '../models/create_reservation.dart';
-import '../widgets/build_reservations.dart';
+import '../models/menu_item.dart';
+import '../models/order_line.dart';
 import '../widgets/reservation_form.dart';
+import 'waiter_reservations_tab.dart';
+import 'waiter_order_tab.dart';
 
 class WaiterApp extends StatelessWidget {
   const WaiterApp({super.key});
@@ -47,6 +50,15 @@ class _WaiterPageState extends State<WaiterPage> {
   bool _submitting = false;
   late String _defaultDate;
   late String _defaultTime;
+
+  // For order tab
+  List<MenuItem> _menuItems = [];
+  List<Map<String, dynamic>> _categories = [];
+  List<OrderLine> _orderLines = [];
+  String _menuSearch = '';
+  int? _selectedReservationId;
+  int? _selectedCategoryId;
+  bool _orderSubmitting = false;
 
   Future<void> _fetchReservations() async {
     setState(() => _loading = true);
@@ -110,6 +122,65 @@ class _WaiterPageState extends State<WaiterPage> {
     }
   }
 
+  Future<void> _fetchMenuAndCategories() async {
+    try {
+      final menu = await _viewModel.fetchMenu();
+      final categories = await _viewModel.fetchCategories();
+      debugPrint('Menu items: $menu');
+      debugPrint('Categories: $categories');
+      setState(() {
+        _menuItems = menu;
+        _categories = categories;
+      });
+    } catch (e) {
+      debugPrint('Menu/category fetch error: $e');
+    }
+  }
+
+  void _resetOrderTab() {
+    setState(() {
+      _selectedReservationId = null;
+      _selectedCategoryId = null;
+      _menuSearch = '';
+      _orderLines = [];
+    });
+    _fetchReservations();
+    _fetchMenuAndCategories();
+  }
+
+  Future<void> _submitOrder() async {
+    if (_selectedReservationId == null || _orderLines.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vælg reservation og tilføj mindst én ret')),
+      );
+      return;
+    }
+    setState(() => _orderSubmitting = true);
+    try {
+      final orderResult = await _viewModel.createOrder(_selectedReservationId!);
+      if (orderResult['id'] == null) throw Exception('Kunne ikke oprette bestilling');
+      final orderId = orderResult['id'];
+      for (final line in _orderLines) {
+        await _viewModel.createOrderLine(
+          orderId: orderId,
+          menuItemId: line.menuItemId,
+          quantity: line.quantity,
+          unitPrice: line.price,
+        );
+      }
+      setState(() => _orderSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bestilling oprettet!')),
+      );
+      _resetOrderTab();
+    } catch (e) {
+      setState(() => _orderSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Fejl: ${e.toString()}')),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -119,61 +190,21 @@ class _WaiterPageState extends State<WaiterPage> {
     _dateController.text = _defaultDate;
     _timeController.text = _defaultTime;
     _fetchReservations();
-  }
-
-  Widget _buildReservationsTabBar() {
-    return Container(
-      color: Colors.brown[800],
-      child: Row(
-        children: [
-          Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 0 ? Colors.white : Colors.white70,
-                backgroundColor: _reservationTabIndex == 0 ? Colors.brown : Colors.transparent,
-              ),
-              onPressed: () {
-                if (_reservationTabIndex != 0) {
-                  setState(() => _reservationTabIndex = 0);
-                  _fetchReservations();
-                }
-              },
-              child: const Text("I dag"),
-            ),
-          ),
-          Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 1 ? Colors.white : Colors.white70,
-                backgroundColor: _reservationTabIndex == 1 ? Colors.brown : Colors.transparent,
-              ),
-              onPressed: () {
-                if (_reservationTabIndex != 1) {
-                  setState(() => _reservationTabIndex = 1);
-                  _fetchReservations();
-                }
-              },
-              child: const Text("Alle fremtidige"),
-            ),
-          ),
-        ],
-      ),
-    );
+    _fetchMenuAndCategories();
   }
 
   Widget _buildBody() {
     if (_currentIndex == 0) {
-      return Column(
-        children: [
-          _buildReservationsTabBar(),
-          Expanded(
-            child: buildReservations(
-              loading: _loading,
-              reservations: _reservations,
-              onReorder: _onReorder,
-            ),
-          ),
-        ],
+      return WaiterReservationsTab(
+        loading: _loading,
+        reservations: _reservations,
+        reservationTabIndex: _reservationTabIndex,
+        onTabChanged: (idx) {
+          setState(() => _reservationTabIndex = idx);
+          _fetchReservations();
+        },
+        onReorder: _onReorder,
+        onRefresh: _fetchReservations,
       );
     } else if (_currentIndex == 1) {
       return ReservationForm(
@@ -186,10 +217,24 @@ class _WaiterPageState extends State<WaiterPage> {
         submitting: _submitting,
         onSubmit: _submitReservation,
       );
-    } else {
-      return const Center(
-        child: Text("Indstillinger", style: TextStyle(color: Colors.white)),
+    } else if (_currentIndex == 2) {
+      return WaiterOrderTab(
+        reservations: _reservations,
+        menuItems: _menuItems,
+        categories: _categories,
+        orderLines: _orderLines,
+        menuSearch: _menuSearch,
+        selectedReservationId: _selectedReservationId,
+        selectedCategoryId: _selectedCategoryId,
+        orderSubmitting: _orderSubmitting,
+        onReservationChanged: (id) => setState(() => _selectedReservationId = id),
+        onCategoryChanged: (id) => setState(() => _selectedCategoryId = id),
+        onMenuSearchChanged: (val) => setState(() => _menuSearch = val),
+        onOrderLinesChanged: (lines) => setState(() => _orderLines = lines),
+        onSubmitOrder: _submitOrder,
       );
+    } else {
+      return const SizedBox.shrink();
     }
   }
 
@@ -215,15 +260,19 @@ class _WaiterPageState extends State<WaiterPage> {
             icon: Icon(Icons.list),
             label: 'Reservationer',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Opret'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Indstillinger',
+            icon: Icon(Icons.add),
+            label: 'Opret',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Bestil',
           ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
           if (index == 0) _fetchReservations();
+          if (index == 2) _resetOrderTab();
         },
       ),
     );

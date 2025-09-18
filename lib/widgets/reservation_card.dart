@@ -4,10 +4,12 @@ import '../models/_reservation.dart';
 class ReservationCard extends StatelessWidget {
   final Reservation reservation;
   final int index;
+  final Widget? trailing;
 
   const ReservationCard({
     required this.reservation,
     required this.index,
+    this.trailing,
     super.key,
   });
 
@@ -68,6 +70,7 @@ class ReservationCard extends StatelessWidget {
             ],
           ),
         ),
+        trailing: trailing,
       ),
     );
   }
