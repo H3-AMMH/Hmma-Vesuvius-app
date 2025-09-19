@@ -310,10 +310,6 @@ class _WaiterPageState extends State<WaiterPage> {
             label: 'Opret reservation',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Opret reservation',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Bestil',
           ),
@@ -323,6 +319,8 @@ class _WaiterPageState extends State<WaiterPage> {
           if (index == 0) _fetchReservations();
           if (index == 2) _resetOrderTab();
         },
+        type: BottomNavigationBarType.fixed,
+        elevation: 8,
       ),
     );
   }
