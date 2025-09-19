@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/waiter_view_model.dart';
+import '../viewmodels/order_view_model.dart';
 import '../models/_reservation.dart';
 import '../models/create_reservation.dart';
+import '../models/order.dart';
 import '../widgets/build_reservations.dart';
 import '../widgets/reservation_form.dart';
+import '../widgets/order_list.dart';
 
 class WaiterApp extends StatelessWidget {
   const WaiterApp({super.key});
@@ -31,8 +34,11 @@ class WaiterPage extends StatefulWidget {
 
 class _WaiterPageState extends State<WaiterPage> {
   final _viewModel = WaiterViewModel();
+  final _orderViewModel = OrderViewModel();
   List<Reservation> _reservations = [];
+  List<Order> _orders = [];
   bool _loading = false;
+  bool _loadingOrders = false;
   int _currentIndex = 0;
 
   // Add: 0 = today, 1 = all upcoming
@@ -103,6 +109,37 @@ class _WaiterPageState extends State<WaiterPage> {
         context,
       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       debugPrint('Reservation error: $e');
+    }
+  }
+
+  Future<void> _fetchOrders() async {
+    setState(() => _loadingOrders = true);
+    try {
+      final orders = await _orderViewModel.fetchOrders();
+      setState(() {
+        _orders = orders;
+        _loadingOrders = false;
+      });
+    } catch (e) {
+      setState(() => _loadingOrders = false);
+      debugPrint('Error fetching orders: $e');
+    }
+  }
+
+  Future<void> _updateOrderStatus(Order order, String newStatus) async {
+    try {
+      await _orderViewModel.updateOrderStatus(order.id, newStatus);
+      _fetchOrders(); // Refresh the orders list
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ordre status opdateret til ${Order(id: 0, reservationId: 0, status: newStatus).statusDisplay}')),
+      );
+    } catch (e) {
+      debugPrint('Error updating order status: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fejl ved opdatering af ordre status')),
+      );
     }
   }
 
@@ -181,9 +218,35 @@ class _WaiterPageState extends State<WaiterPage> {
         submitting: _submitting,
         onSubmit: _submitReservation,
       );
+    } else if (_currentIndex == 2) {
+      return Column(
+        children: [
+          Container(
+            color: Colors.brown[800],
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: const Text(
+              'Ordrer',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: OrderListWidget(
+              orders: _orders,
+              loading: _loadingOrders,
+              onStatusUpdate: _updateOrderStatus,
+              onRefresh: _fetchOrders,
+            ),
+          ),
+        ],
+      );
     } else {
       return const Center(
-        child: Text("Opret ordrer", style: TextStyle(color: Colors.white)),
+        child: Text("Ukendt fane", style: TextStyle(color: Colors.white)),
       );
     }
   }
@@ -198,6 +261,13 @@ class _WaiterPageState extends State<WaiterPage> {
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: _fetchReservations,
+                ),
+              ]
+            : _currentIndex == 2
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _fetchOrders,
                 ),
               ]
             : null,
@@ -216,12 +286,13 @@ class _WaiterPageState extends State<WaiterPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),
-            label: 'Opret ordrer',
+            label: 'Ordrer',
           ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
           if (index == 0) _fetchReservations();
+          if (index == 2) _fetchOrders();
         },
       ),
     );

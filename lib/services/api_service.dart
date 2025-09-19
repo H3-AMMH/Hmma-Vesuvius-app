@@ -45,4 +45,36 @@ class ApiService {
     }
     return json.decode(response.body);
   }
+
+  static Future<List<dynamic>> fetchOrders() async {
+    final response = await _client().get(Uri.parse("$_baseUrl/orders"));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    throw Exception("Failed to fetch orders: ${response.statusCode}");
+  }
+
+  static Future<Map<String, dynamic>> updateOrderStatus(int orderId, String status) async {
+    final response = await _client().patch(
+      Uri.parse("$_baseUrl/orders/$orderId"),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'status': status}),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    throw Exception("Failed to update order status: ${response.statusCode}");
+  }
+
+  static Future<Map<String, dynamic>> createOrder(int reservationId) async {
+    final response = await _client().post(
+      Uri.parse("$_baseUrl/orders"),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'reservation_id': reservationId}),
+    );
+    if (response.statusCode == 201) {
+      return json.decode(response.body);
+    }
+    throw Exception("Failed to create order: ${response.statusCode}");
+  }
 }
