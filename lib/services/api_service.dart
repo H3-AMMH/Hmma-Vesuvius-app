@@ -13,7 +13,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchMenu() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/menu"));
+    final response = await _client().get(Uri.parse("$_baseUrl/api/menu"));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -21,7 +21,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchReservations({String? date, bool future = false}) async {
-    String url = "$_baseUrl/reservations";
+    String url = "$_baseUrl/api/reservations";
     if (future) {
       url += "?future=true";
     } else if (date != null) {
@@ -36,7 +36,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> createReservation(Map<String, dynamic> reservation) async {
     final response = await _client().post(
-      Uri.parse("$_baseUrl/reservations"),
+      Uri.parse("$_baseUrl/api/reservations"),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(reservation),
     );
@@ -47,7 +47,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchOrders() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/orders"));
+    final response = await _client().get(Uri.parse("$_baseUrl/api/orders"));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -56,7 +56,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> updateOrderStatus(int orderId, String status) async {
     final response = await _client().patch(
-      Uri.parse("$_baseUrl/orders/$orderId"),
+      Uri.parse("$_baseUrl/api/orders/$orderId"),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'status': status}),
     );
@@ -68,7 +68,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> createOrder(int reservationId) async {
     final response = await _client().post(
-      Uri.parse("$_baseUrl/orders"),
+      Uri.parse("$_baseUrl/api/orders"),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'reservation_id': reservationId}),
     );
