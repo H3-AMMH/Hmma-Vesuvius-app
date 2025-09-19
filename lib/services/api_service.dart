@@ -73,14 +73,14 @@ class ApiService {
 
   static Future<Map<String, dynamic>> createOrder(int reservationId) async {
     final response = await _client().post(
-      Uri.parse("$_baseUrl/reservations"),
+      Uri.parse("$_baseUrl/orders"),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'reservation_id': reservationId}),
     );
     if (response.statusCode == 201 || response.statusCode == 200) {
       return json.decode(response.body);
     }
-    return json.decode(response.body);
+    throw Exception("Failed to create order: ${response.statusCode} - ${response.body}");
   }
 
   static Future<Map<String, dynamic>> createOrderLine({
@@ -102,7 +102,7 @@ class ApiService {
     if (response.statusCode == 201 || response.statusCode == 200) {
       return json.decode(response.body);
     }
-    return json.decode(response.body);
+    throw Exception("Failed to create order line: ${response.statusCode}");
   }
 
   static Future<Map<String, dynamic>> updateOrderLine({

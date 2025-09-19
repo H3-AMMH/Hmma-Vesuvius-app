@@ -59,5 +59,5 @@
 
 ### Changed
 - Refactored waiter view to follow MVVM.
-- Splitted the code into smaller widgets reservations and order tabs.
-- Added unit-test for creating order.
+- Split the code into smaller widgets reservations and order tabs.
+- Added (skipped) integration test for creating order.

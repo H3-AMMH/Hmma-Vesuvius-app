@@ -184,57 +184,7 @@ class _WaiterPageState extends State<WaiterPage> {
     super.initState();
     _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _partySizeController.text = "1";
-    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _partySizeController.text = "1";
     _fetchReservations();
-  }
-
-  Widget _buildReservationsTabBar() {
-    return Container(
-      color: Colors.brown[800],
-      child: Row(
-        children: [
-          Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 0
-                    ? Colors.white
-                    : Colors.white70,
-                backgroundColor: _reservationTabIndex == 0
-                    ? Colors.brown
-                    : Colors.transparent,
-              ),
-              onPressed: () {
-                if (_reservationTabIndex != 0) {
-                  setState(() => _reservationTabIndex = 0);
-                  _fetchReservations();
-                }
-              },
-              child: const Text("I dag"),
-            ),
-          ),
-          Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: _reservationTabIndex == 1
-                    ? Colors.white
-                    : Colors.white70,
-                backgroundColor: _reservationTabIndex == 1
-                    ? Colors.brown
-                    : Colors.transparent,
-              ),
-              onPressed: () {
-                if (_reservationTabIndex != 1) {
-                  setState(() => _reservationTabIndex = 1);
-                  _fetchReservations();
-                }
-              },
-              child: const Text("Alle fremtidige"),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildBody() {
