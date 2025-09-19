@@ -30,6 +30,8 @@ class _ChefPageState extends State<ChefPage> {
   List<MenuItem> _menuItems = [];
   bool _loading = false;
 
+  final Map<int, bool> _switchStates = {};
+
   Future<void> _fetchMenu() async {
     setState(() => _loading = true);
     try {
@@ -46,7 +48,7 @@ class _ChefPageState extends State<ChefPage> {
 
   Widget _buildBody() {
     if (_currentIndex == 0) {
-      return const Center(child: Text("Velkommen til Kok-siden"));
+      return const Center(child: Text("Velkommen til Kokke-siden"));
     } else if (_currentIndex == 1) {
       if (_loading) {
         return const Center(child: CircularProgressIndicator());
@@ -58,17 +60,31 @@ class _ChefPageState extends State<ChefPage> {
         itemCount: _menuItems.length,
         itemBuilder: (context, index) {
           final item = _menuItems[index];
+
+          _switchStates.putIfAbsent(index, () => true);
+
           return ListTile(
             title: Text(item.name, style: const TextStyle(color: Colors.white)),
             subtitle: Text(
               "${item.price} kr.",
               style: const TextStyle(color: Colors.white70),
             ),
+            trailing: Switch(
+              value: _switchStates[index]!,
+              activeColor: const Color(0xFFA67B5B),
+              inactiveThumbColor: const Color(0xFF4B3621),
+              onChanged: (bool value) {
+                setState(() {
+                  _switchStates[index] = value;
+                  //item.isAvalible = value;
+                });
+              },
+            ),
           );
         },
       );
     } else {
-      return const Center(child: Text("Indstillinger"));
+      return const Center(child: Text("Ordrer"));
     }
   }
 
@@ -82,7 +98,10 @@ class _ChefPageState extends State<ChefPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hjem'),
           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Indstillinger'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Indstillinger',
+          ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);

@@ -8,7 +8,8 @@ class ApiService {
 
   static IOClient _client() {
     final ioc = HttpClient();
-    ioc.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    ioc.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
     return IOClient(ioc);
   }
 
@@ -20,7 +21,25 @@ class ApiService {
     throw Exception("Failed to fetch menu: ${response.statusCode}");
   }
 
-  static Future<List<dynamic>> fetchReservations({String? date, bool future = false}) async {
+  static Future<List<dynamic>> UpdateMenuAvailability(
+    int id,
+    bool isAvalible,
+  ) async {
+    final response = await _client().put(
+      Uri.parse("$_baseUrl/menu/$id"),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'isAvalible': isAvalible}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception("Failed to update menu item");
+    }
+    return json.decode(response.body);
+  }
+
+  static Future<List<dynamic>> fetchReservations({
+    String? date,
+    bool future = false,
+  }) async {
     String url = "$_baseUrl/reservations";
     if (future) {
       url += "?future=true";
@@ -34,7 +53,9 @@ class ApiService {
     throw Exception("Failed to fetch reservations: ${response.statusCode}");
   }
 
-  static Future<Map<String, dynamic>> createReservation(Map<String, dynamic> reservation) async {
+  static Future<Map<String, dynamic>> createReservation(
+    Map<String, dynamic> reservation,
+  ) async {
     final response = await _client().post(
       Uri.parse("$_baseUrl/reservations"),
       headers: {'Content-Type': 'application/json'},
