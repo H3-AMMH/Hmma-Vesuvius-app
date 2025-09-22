@@ -17,7 +17,8 @@ void main() {
         'category_id': 1,
         'description_danish': 'Lækker pizza',
         'description_english': 'Delicious pizza',
-        'price': 120.0
+        'price': 120.0,
+        'is_available': true,
       };
       final item = MenuItem.fromJson(json);
       expect(item.id, 1);
@@ -26,6 +27,7 @@ void main() {
       expect(item.descriptionDanish, 'Lækker pizza');
       expect(item.descriptionEnglish, 'Delicious pizza');
       expect(item.price, 120.0);
+      expect(item.isAvailable, true); 
     });
   });
 
