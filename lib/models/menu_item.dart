@@ -13,9 +13,21 @@ class MenuItem {
     required this.descriptionDanish,
     this.descriptionEnglish,
     required this.price,
+    required this.isAvailable,
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
+    bool availability = false;
+
+    if (json['isAvailable'] != null) {
+      var val = json['isAvailable'];
+      if (val is int) {
+        availability = val == 1;
+      } else if (val is bool) {
+        availability = val;
+      }
+    }
+
     return MenuItem(
       id: json['id'],
       name: json['name'],
