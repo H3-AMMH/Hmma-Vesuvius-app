@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../viewmodels/chef_view_model.dart';
 import '../models/menu_item.dart';
+import '../services/api_service.dart';
 
 class ChefApp extends StatelessWidget {
   const ChefApp({super.key});
@@ -70,14 +71,26 @@ class _ChefPageState extends State<ChefPage> {
               style: const TextStyle(color: Colors.white70),
             ),
             trailing: Switch(
-              value: _switchStates[index]!,
+              value: item.isAvailable,
               activeColor: const Color(0xFFA67B5B),
               inactiveThumbColor: const Color(0xFF4B3621),
-              onChanged: (bool value) {
+              onChanged: (bool value) async {
+                // Update UI immediately
                 setState(() {
-                  _switchStates[index] = value;
-                  //item.isAvalible = value;
+                  item.isAvailable = value;
+                  print("Updating menu item ${item.id} to $value");
                 });
+
+                // Update backend
+                try {
+                  await ApiService.updateMenuAvailability(item.id, value);
+                } catch (e) {
+                  // Revert UI if backend fails
+                  setState(() {
+                    item.isAvailable = !value;
+                  });
+                  debugPrint("Failed to update availability: $e");
+                }
               },
             ),
           );

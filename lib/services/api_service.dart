@@ -21,15 +21,16 @@ class ApiService {
     throw Exception("Failed to fetch menu: ${response.statusCode}");
   }
 
-  static Future<List<dynamic>> UpdateMenuAvailability(
+  static Future<List<dynamic>> updateMenuAvailability(
     int id,
-    bool isAvalible,
+    bool isAvailable,
   ) async {
     final response = await _client().put(
       Uri.parse("$_baseUrl/menu/$id"),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'isAvalible': isAvalible}),
+      body: json.encode({'isAvailable': isAvailable}),
     );
+    print("Response: ${response.statusCode} - ${response.body}");
     if (response.statusCode != 200) {
       throw Exception("Failed to update menu item");
     }
