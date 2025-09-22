@@ -5,6 +5,7 @@ import 'dart:io';
 
 class ApiService {
   static String get _baseUrl => dotenv.env['API_BASE_URL'] ?? "";
+  static String get _apiKey => dotenv.env['API_KEY'] ?? "";
 
   static IOClient _client() {
     final ioc = HttpClient();
@@ -12,9 +13,19 @@ class ApiService {
     return IOClient(ioc);
   }
 
+  static Map<String, String> _headers({Map<String, String>? extra}) {
+    return {
+      'x-api-key': _apiKey,
+      if (extra != null) ...extra,
+    };
+  }
+
   // --- Menu ---
   static Future<List<dynamic>> fetchMenu() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/menu"));
+    final response = await _client().get(
+      Uri.parse("$_baseUrl/menu"),
+      headers: _headers(),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -28,7 +39,10 @@ class ApiService {
     } else if (date != null) {
       url += "?date=$date";
     }
-    final response = await _client().get(Uri.parse(url));
+    final response = await _client().get(
+      Uri.parse(url),
+      headers: _headers(),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -38,7 +52,7 @@ class ApiService {
   static Future<Map<String, dynamic>> createReservation(Map<String, dynamic> reservation) async {
     final response = await _client().post(
       Uri.parse("$_baseUrl/reservations"),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
       body: json.encode(reservation),
     );
     if (response.statusCode == 201) {
@@ -48,7 +62,10 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchOrders() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/orders"));
+    final response = await _client().get(
+      Uri.parse("$_baseUrl/orders"),
+      headers: _headers(),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -56,7 +73,10 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchOrderLines(int orderId) async {
-    final response = await _client().get(Uri.parse("$_baseUrl/orders/$orderId/lines"));
+    final response = await _client().get(
+      Uri.parse("$_baseUrl/order_lines/$orderId"),
+      headers: _headers(),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -64,7 +84,10 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchCategories() async {
-    final response = await _client().get(Uri.parse("$_baseUrl/categories"));
+    final response = await _client().get(
+      Uri.parse("$_baseUrl/categories"),
+      headers: _headers(),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -74,7 +97,7 @@ class ApiService {
   static Future<Map<String, dynamic>> createOrder(int reservationId) async {
     final response = await _client().post(
       Uri.parse("$_baseUrl/orders"),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
       body: json.encode({'reservation_id': reservationId}),
     );
     if (response.statusCode == 201 || response.statusCode == 200) {
@@ -91,7 +114,7 @@ class ApiService {
   }) async {
     final response = await _client().post(
       Uri.parse("$_baseUrl/order_lines"),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
       body: json.encode({
         'order_id': orderId,
         'menu_item_id': menuItemId,
@@ -111,7 +134,7 @@ class ApiService {
   }) async {
     final response = await _client().patch(
       Uri.parse("$_baseUrl/order_lines/$orderLineId"),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
       body: json.encode({'quantity': quantity}),
     );
     if (response.statusCode == 200) {
@@ -123,10 +146,23 @@ class ApiService {
   static Future<Map<String, dynamic>> deleteOrderLine(int orderLineId) async {
     final response = await _client().delete(
       Uri.parse("$_baseUrl/order_lines/$orderLineId"),
+      headers: _headers(),
     );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
     throw Exception("Failed to delete order line: ${response.statusCode}");
+  }
+
+  static Future<Map<String, dynamic>> updateOrderStatus(int orderId, {required String status, required int reservationId}) async {
+    final response = await _client().patch(
+      Uri.parse("$_baseUrl/orders/$orderId"),
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
+      body: json.encode({'status': status, 'reservation_id': reservationId}),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    throw Exception("Failed to update order status: ${response.statusCode}");
   }
 }

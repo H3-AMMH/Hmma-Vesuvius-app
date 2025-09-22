@@ -51,7 +51,7 @@ class WaiterOrderTab extends StatelessWidget {
       child: Column(
         children: [
           DropdownButtonFormField<int>(
-            value: selectedReservationId,
+            initialValue: selectedReservationId,
             decoration: const InputDecoration(
               labelText: 'Vælg reservation',
               labelStyle: TextStyle(color: Colors.white),

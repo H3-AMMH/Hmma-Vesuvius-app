@@ -52,10 +52,6 @@ class WaiterReservationsTab extends StatelessWidget {
                   child: const Text("Alle fremtidige"),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.refresh, color: Colors.white),
-                onPressed: onRefresh,
-              ),
             ],
           ),
         ),

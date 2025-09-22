@@ -8,6 +8,9 @@ import '../models/order_line.dart';
 import '../widgets/reservation_form.dart';
 import 'waiter_reservations_tab.dart';
 import 'waiter_order_tab.dart';
+import '../models/order.dart';
+import '../viewmodels/order_view_model.dart';
+import 'order_overview.dart';
 
 class WaiterApp extends StatelessWidget {
   const WaiterApp({super.key});
@@ -48,10 +51,8 @@ class _WaiterPageState extends State<WaiterPage> {
   final _timeController = TextEditingController();
   final _partySizeController = TextEditingController();
   bool _submitting = false;
-  late String _defaultDate;
-  late String _defaultTime;
 
-  // For order tab
+  int _orderTabIndex = 0;
   List<MenuItem> _menuItems = [];
   List<Map<String, dynamic>> _categories = [];
   List<OrderLine> _orderLines = [];
@@ -59,6 +60,11 @@ class _WaiterPageState extends State<WaiterPage> {
   int? _selectedReservationId;
   int? _selectedCategoryId;
   bool _orderSubmitting = false;
+
+  // Orders overview
+  final _orderViewModel = OrderViewModel();
+  List<Order> _orders = [];
+  bool _ordersLoading = false;
 
   Future<void> _fetchReservations() async {
     setState(() => _loading = true);
@@ -91,15 +97,11 @@ class _WaiterPageState extends State<WaiterPage> {
       setState(() => _submitting = false);
       if (!mounted) return;
       if (result['success'] == true) {
-        String smsMsg = '';
-        if (result.containsKey('sms_error')) {
-          smsMsg = '\n(SMS fejlede: ${result['sms_error']})';
-        } else if (result.containsKey('sms_sid')) {
-          smsMsg = '\n(SMS sendt)';
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Reservation created!')));
         }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Reservation created!$smsMsg')));
         _nameController.clear();
         _telController.clear();
         _partySizeController.text = "1";
@@ -135,15 +137,31 @@ class _WaiterPageState extends State<WaiterPage> {
     }
   }
 
+  Future<void> _fetchOrders() async {
+    setState(() => _ordersLoading = true);
+    try {
+      final orders = await _orderViewModel.fetchOrders();
+      setState(() {
+        _orders = orders;
+        _ordersLoading = false;
+      });
+    } catch (e) {
+      setState(() => _ordersLoading = false);
+      debugPrint('Order fetch error: $e');
+    }
+  }
+
   void _resetOrderTab() {
     setState(() {
       _selectedReservationId = null;
       _selectedCategoryId = null;
       _menuSearch = '';
       _orderLines = [];
+      _orderTabIndex = 0;
     });
     _fetchReservations();
     _fetchMenuAndCategories();
+    _fetchOrders();
   }
 
   Future<void> _submitOrder() async {
@@ -173,9 +191,11 @@ class _WaiterPageState extends State<WaiterPage> {
       _resetOrderTab();
     } catch (e) {
       setState(() => _orderSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fejl: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fejl: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -185,6 +205,49 @@ class _WaiterPageState extends State<WaiterPage> {
     _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _partySizeController.text = "1";
     _fetchReservations();
+  }
+
+  Widget _buildOrderTab() {
+    return Column(
+      children: [
+        TabBar(
+          labelColor: Colors.brown,
+          unselectedLabelColor: Colors.white,
+          indicatorColor: Colors.brown,
+          tabs: const [
+            Tab(text: 'Opret bestilling'),
+            Tab(text: 'Se ordrer'),
+          ],
+          onTap: (idx) {
+            setState(() => _orderTabIndex = idx);
+            if (idx == 1) _fetchOrders();
+          },
+        ),
+        Expanded(
+          child: _orderTabIndex == 0
+              ? WaiterOrderTab(
+                  reservations: _reservations,
+                  menuItems: _menuItems,
+                  categories: _categories,
+                  orderLines: _orderLines,
+                  menuSearch: _menuSearch,
+                  selectedReservationId: _selectedReservationId,
+                  selectedCategoryId: _selectedCategoryId,
+                  orderSubmitting: _orderSubmitting,
+                  onReservationChanged: (id) => setState(() => _selectedReservationId = id),
+                  onCategoryChanged: (id) => setState(() => _selectedCategoryId = id),
+                  onMenuSearchChanged: (val) => setState(() => _menuSearch = val),
+                  onOrderLinesChanged: (lines) => setState(() => _orderLines = lines),
+                  onSubmitOrder: _submitOrder,
+                )
+              : OrderOverviewTab(
+                  orders: _orders,
+                  loading: _ordersLoading,
+                  onRefresh: _fetchOrders,
+                ),
+        ),
+      ],
+    );
   }
 
   Widget _buildBody() {
@@ -213,20 +276,10 @@ class _WaiterPageState extends State<WaiterPage> {
         onSubmit: _submitReservation,
       );
     } else if (_currentIndex == 2) {
-      return WaiterOrderTab(
-        reservations: _reservations,
-        menuItems: _menuItems,
-        categories: _categories,
-        orderLines: _orderLines,
-        menuSearch: _menuSearch,
-        selectedReservationId: _selectedReservationId,
-        selectedCategoryId: _selectedCategoryId,
-        orderSubmitting: _orderSubmitting,
-        onReservationChanged: (id) => setState(() => _selectedReservationId = id),
-        onCategoryChanged: (id) => setState(() => _selectedCategoryId = id),
-        onMenuSearchChanged: (val) => setState(() => _menuSearch = val),
-        onOrderLinesChanged: (lines) => setState(() => _orderLines = lines),
-        onSubmitOrder: _submitOrder,
+      return DefaultTabController(
+        length: 2,
+        initialIndex: _orderTabIndex,
+        child: _buildOrderTab(),
       );
     } else {
       return const SizedBox.shrink();
