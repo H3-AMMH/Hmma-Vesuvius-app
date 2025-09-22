@@ -5,6 +5,7 @@ class MenuItem {
   final String descriptionDanish;
   final String? descriptionEnglish;
   final double price;
+  bool isAvailable;
 
   MenuItem({
     required this.id,
@@ -19,8 +20,8 @@ class MenuItem {
   factory MenuItem.fromJson(Map<String, dynamic> json) {
     bool availability = false;
 
-    if (json['isAvailable'] != null) {
-      var val = json['isAvailable'];
+    if (json['is_available'] != null) {
+      var val = json['is_available'];
       if (val is int) {
         availability = val == 1;
       } else if (val is bool) {
@@ -37,6 +38,7 @@ class MenuItem {
       price: (json['price'] is int)
           ? (json['price'] as int).toDouble()
           : (json['price'] as num).toDouble(),
+      isAvailable: availability,
     );
   }
 }
