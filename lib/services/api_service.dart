@@ -41,7 +41,6 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'isAvailable': isAvailable}),
     );
-    print("Response: ${response.statusCode} - ${response.body}");
     if (response.statusCode != 200) {
       throw Exception("Failed to update menu item");
     }
