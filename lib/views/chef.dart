@@ -175,7 +175,7 @@ class _ChefPageState extends State<ChefPage> {
         itemBuilder: (context, index) {
           final item = _menuItems[index];
 
-          _switchStates.putIfAbsent(index, () => true);
+          //r_switchStates.putIfAbsent(index, () => true);
 
           return ListTile(
             title: Text(item.name, style: const TextStyle(color: Colors.white)),

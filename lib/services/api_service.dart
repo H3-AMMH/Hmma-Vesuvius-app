@@ -33,7 +33,7 @@ class ApiService {
   static Future<List<dynamic>> fullUpdateMenu(int id) async {
     final response = await _client().put(
       Uri.parse("$_baseUrl/menu/$id"),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
     );
     if (response.statusCode != 200) {
       throw Exception("Failed to update menu item");
