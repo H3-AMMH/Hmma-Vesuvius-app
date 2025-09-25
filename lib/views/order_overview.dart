@@ -104,11 +104,6 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
     _fetchOrderLines();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> _fetchOrderLines() async {
     setState(() {
       _loading = true;

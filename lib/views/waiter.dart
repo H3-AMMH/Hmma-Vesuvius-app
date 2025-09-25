@@ -105,6 +105,19 @@ class _WaiterPageState extends State<WaiterPage> {
         _telController.clear();
         _partySizeController.text = "1";
         _fetchReservations();
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              result['message'] != null && result['message'].toString().isNotEmpty
+                  ? 'Error: ${result['message']}'
+                  : 'Failed to create reservation.',
+            ),
+          ),
+        );
       }
     } catch (e) {
       setState(() => _submitting = false);
