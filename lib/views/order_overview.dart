@@ -124,43 +124,34 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
   }
 
   Future<void> _closeOrder() async {
-    setState(() => _closing = true);
-    try {
-      await ApiService.updateOrderStatus(widget.order.id, status: 'closed', reservationId: widget.order.reservationId);
-      setState(() => _closing = false);
-      widget.onOrderClosed();
-      if (!mounted) return;
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ordre markeret som lukket')),
-      );
-    } catch (e) {
-      setState(() => _closing = false);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fejl ved lukning af ordre: $e')),
-      );
-    }
+    await _orderViewModel.closeOrder(
+      orderId: widget.order.id,
+      reservationId: widget.order.reservationId,
+      onLoading: (loading) {
+        if (mounted) setState(() => _closing = loading);
+      },
+    );
+    widget.onOrderClosed();
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ordre markeret som lukket')),
+    );
   }
 
   Future<void> _deleteOrder() async {
-    setState(() => _deleting = true);
-    try {
-      await _orderViewModel.deleteOrder(widget.order.id);
-      setState(() => _deleting = false);
-      widget.onOrderClosed();
-      if (!mounted) return;
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ordre slettet')),
-      );
-    } catch (e) {
-      setState(() => _deleting = false);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fejl ved sletning af ordre: $e')),
-      );
-    }
+    await _orderViewModel.deleteOrderWithState(
+      orderId: widget.order.id,
+      onLoading: (loading) {
+        if (mounted) setState(() => _deleting = loading);
+      },
+    );
+    widget.onOrderClosed();
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ordre slettet')),
+    );
   }
 
   @override

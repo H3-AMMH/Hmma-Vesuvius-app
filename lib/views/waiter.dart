@@ -112,9 +112,7 @@ class _WaiterPageState extends State<WaiterPage> {
         ).showSnackBar(
           SnackBar(
             content: Text(
-              result['message'] != null && result['message'].toString().isNotEmpty
-                  ? 'Error: ${result['message']}'
-                  : 'Failed to create reservation.',
+              _formatErrorMessage(result),
             ),
           ),
         );
@@ -127,6 +125,13 @@ class _WaiterPageState extends State<WaiterPage> {
       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       debugPrint('Reservation error: $e');
     }
+  }
+
+  String _formatErrorMessage(Map<String, dynamic> result) {
+    if (result.containsKey('error')) {
+      return result['error'];
+    }
+    return 'An unknown error occurred.';
   }
 
   Future<void> _fetchMenuAndCategories() async {
