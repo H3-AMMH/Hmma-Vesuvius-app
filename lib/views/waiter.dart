@@ -97,8 +97,7 @@ class _WaiterPageState extends State<WaiterPage> {
       setState(() => _submitting = false);
       if (!mounted) return;
       if (result['success'] == true) {
-        if (!mounted) return;
-        if (mounted) {
+        if (!mounted) return; {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Reservation created!')));
@@ -107,11 +106,6 @@ class _WaiterPageState extends State<WaiterPage> {
         _telController.clear();
         _partySizeController.text = "1";
         _fetchReservations();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(result['error'] ?? 'Unknown error')),
-          );
-        }
       }
     } catch (e) {
       setState(() => _submitting = false);

@@ -233,7 +233,7 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
                       icon: _deleting
                           ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                           : const Icon(Icons.delete, color: Colors.white),
-                      label: const Text('Slet ordre'),
+                      label: const Text('Slet ordre', style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],
