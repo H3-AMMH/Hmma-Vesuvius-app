@@ -97,6 +97,7 @@ class _WaiterPageState extends State<WaiterPage> {
       setState(() => _submitting = false);
       if (!mounted) return;
       if (result['success'] == true) {
+        if (!mounted) return;
         if (mounted) {
           ScaffoldMessenger.of(
             context,
@@ -106,11 +107,11 @@ class _WaiterPageState extends State<WaiterPage> {
         _telController.clear();
         _partySizeController.text = "1";
         _fetchReservations();
-        setState(() => _currentIndex = 0);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['error'] ?? 'Unknown error')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result['error'] ?? 'Unknown error')),
+          );
+        }
       }
     } catch (e) {
       setState(() => _submitting = false);
@@ -166,9 +167,11 @@ class _WaiterPageState extends State<WaiterPage> {
 
   Future<void> _submitOrder() async {
     if (_selectedReservationId == null || _orderLines.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vælg reservation og tilføj mindst én ret')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vælg reservation og tilføj mindst én ret')),
+        );
+      }
       return;
     }
     setState(() => _orderSubmitting = true);
@@ -185,9 +188,11 @@ class _WaiterPageState extends State<WaiterPage> {
         );
       }
       setState(() => _orderSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bestilling oprettet!')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bestilling oprettet!')),
+        );
+      }
       _resetOrderTab();
     } catch (e) {
       setState(() => _orderSubmitting = false);

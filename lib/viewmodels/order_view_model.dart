@@ -6,4 +6,8 @@ class OrderViewModel {
     final data = await ApiService.fetchOrders();
     return data.map<Order>((json) => Order.fromJson(json)).toList();
   }
+
+  Future<Map<String, dynamic>> deleteOrder(int orderId) async {
+    return await ApiService.deleteOrder(orderId);
+  }
 }

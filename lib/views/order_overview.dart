@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
 import '../services/api_service.dart';
+import '../viewmodels/order_view_model.dart';
 
 class OrderOverviewTab extends StatelessWidget {
   final List<Order> orders;
@@ -91,8 +92,10 @@ class _OrderDetailsSheet extends StatefulWidget {
 class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
   bool _loading = true;
   bool _closing = false;
+  bool _deleting = false;
   List<dynamic> _orderLines = [];
   String? _error;
+  final _orderViewModel = OrderViewModel();
 
   @override
   void initState() {
@@ -125,14 +128,36 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
       await ApiService.updateOrderStatus(widget.order.id, status: 'closed', reservationId: widget.order.reservationId);
       setState(() => _closing = false);
       widget.onOrderClosed();
-      if (mounted) Navigator.of(context).pop();
+      if (!mounted) return;
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Ordre markeret som lukket')),
       );
     } catch (e) {
       setState(() => _closing = false);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Fejl ved lukning af ordre: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteOrder() async {
+    setState(() => _deleting = true);
+    try {
+      await _orderViewModel.deleteOrder(widget.order.id);
+      setState(() => _deleting = false);
+      widget.onOrderClosed();
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ordre slettet')),
+      );
+    } catch (e) {
+      setState(() => _deleting = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Fejl ved sletning af ordre: $e')),
       );
     }
   }
@@ -197,6 +222,20 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
                         label: const Text('Markér som lukket'),
                       ),
                     ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[700],
+                      ),
+                      onPressed: _deleting ? null : _deleteOrder,
+                      icon: _deleting
+                          ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Icon(Icons.delete, color: Colors.white),
+                      label: const Text('Slet ordre'),
+                    ),
+                  ),
                 ],
               ),
       ),

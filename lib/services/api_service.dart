@@ -198,4 +198,15 @@ class ApiService {
     }
     throw Exception("Failed to update order status: ${response.statusCode}");
   }
+
+  static Future<Map<String, dynamic>> deleteOrder(int orderId) async {
+    final response = await _client().delete(
+      Uri.parse("$_baseUrl/orders/$orderId"),
+      headers: _headers(),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    }
+    throw Exception("Failed to delete order: ${response.statusCode}");
+  }
 }
