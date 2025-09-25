@@ -1,16 +1,36 @@
 class MenuItem {
+  final int id;
   final String name;
-  final int price;
+  final int categoryId;
+  final String descriptionDanish;
+  final String? descriptionEnglish;
+  final double price;
+  bool isAvailable;
 
   MenuItem({
+    required this.id,
     required this.name,
+    required this.categoryId,
+    required this.descriptionDanish,
+    this.descriptionEnglish,
     required this.price,
+    required this.isAvailable,
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
+    var val = json['isAvailable'] ?? json['is_available'];
+    bool availability = (val is int) ? val == 1 : (val as bool? ?? false);
+
     return MenuItem(
+      id: json['id'],
       name: json['name'],
-      price: json['price'],
+      categoryId: json['category_id'],
+      descriptionDanish: json['description_danish'],
+      descriptionEnglish: json['description_english'],
+      price: (json['price'] is int)
+          ? (json['price'] as int).toDouble()
+          : (json['price'] as num).toDouble(),
+      isAvailable: availability,
     );
   }
 }

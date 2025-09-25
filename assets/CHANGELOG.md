@@ -54,3 +54,19 @@
 
 ### Fixed
 - .env file is included in the assets folder now.
+
+## [1.4.0] - 2025-09-18
+
+### Changed
+- Refactored waiter view to follow MVVM.
+- Split the code into smaller widgets reservations and order tabs.
+- Added (skipped) integration test for creating order.
+
+## [1.4.1] - 2025-09-22
+
+### Added
+- Made order page for waiter and chef
+- Created new method in api service for order feature.
+
+### Changes
+- API key for security(Remember to add API_KEY in .env file).

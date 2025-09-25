@@ -6,6 +6,7 @@ Widget buildReservations({
   required bool loading,
   required List<Reservation> reservations,
   required Function(int oldIndex, int newIndex) onReorder,
+  Widget? Function(BuildContext, Reservation)? trailingBuilder,
 }) {
   return loading
       ? const Center(child: CircularProgressIndicator())
@@ -25,6 +26,7 @@ Widget buildReservations({
               key: Key('${res.id ?? index}'),
               reservation: res,
               index: index,
+              trailing: trailingBuilder?.call(context, res),
             );
           },
           onReorder: onReorder,
