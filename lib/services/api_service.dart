@@ -15,10 +15,7 @@ class ApiService {
   }
 
   static Map<String, String> _headers({Map<String, String>? extra}) {
-    return {
-      'x-api-key': _apiKey,
-      if (extra != null) ...extra,
-    };
+    return {'x-api-key': _apiKey, if (extra != null) ...extra};
   }
 
   // --- Menu ---
@@ -36,7 +33,7 @@ class ApiService {
   static Future<List<dynamic>> fullUpdateMenu(int id) async {
     final response = await _client().put(
       Uri.parse("$_baseUrl/menu/$id"),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
     );
     if (response.statusCode != 200) {
       throw Exception("Failed to update menu item");
@@ -44,20 +41,19 @@ class ApiService {
     return json.decode(response.body);
   }
 
-  static Future<List<dynamic>> updateMenuAvailability(
+  static Future<Map<String, dynamic>> updateMenuAvailability(
     int id,
     bool isAvailable,
   ) async {
-    final response = await _client().put(
+    final response = await _client().patch(
       Uri.parse("$_baseUrl/menu/$id"),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'isAvailable': isAvailable}),
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
+      body: json.encode({'isAvailable': isAvailable ? 1 : 0}),
     );
-    print("Response: ${response.statusCode} - ${response.body}");
     if (response.statusCode != 200) {
-      throw Exception("Failed to update menu item");
+      throw Exception(response.statusCode);
     }
-    return json.decode(response.body);
+    return json.decode(response.body) as Map<String, dynamic>;
   }
 
   static Future<List<dynamic>> fetchReservations({
@@ -70,10 +66,7 @@ class ApiService {
     } else if (date != null) {
       url += "?date=$date";
     }
-    final response = await _client().get(
-      Uri.parse(url),
-      headers: _headers(),
-    );
+    final response = await _client().get(Uri.parse(url), headers: _headers());
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
@@ -136,7 +129,9 @@ class ApiService {
     if (response.statusCode == 201 || response.statusCode == 200) {
       return json.decode(response.body);
     }
-    throw Exception("Failed to create order: ${response.statusCode} - ${response.body}");
+    throw Exception(
+      "Failed to create order: ${response.statusCode} - ${response.body}",
+    );
   }
 
   static Future<Map<String, dynamic>> createOrderLine({
@@ -187,7 +182,11 @@ class ApiService {
     throw Exception("Failed to delete order line: ${response.statusCode}");
   }
 
-  static Future<Map<String, dynamic>> updateOrderStatus(int orderId, {required String status, required int reservationId}) async {
+  static Future<Map<String, dynamic>> updateOrderStatus(
+    int orderId, {
+    required String status,
+    required int reservationId,
+  }) async {
     final response = await _client().patch(
       Uri.parse("$_baseUrl/orders/$orderId"),
       headers: _headers(extra: {'Content-Type': 'application/json'}),

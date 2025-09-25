@@ -18,16 +18,8 @@ class MenuItem {
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
-    bool availability = false;
-
-    if (json['is_available'] != null) {
-      var val = json['is_available'];
-      if (val is int) {
-        availability = val == 1;
-      } else if (val is bool) {
-        availability = val;
-      }
-    }
+    var val = json['isAvailable'] ?? json['is_available'];
+    bool availability = (val is int) ? val == 1 : (val as bool? ?? false);
 
     return MenuItem(
       id: json['id'],

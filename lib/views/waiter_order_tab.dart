@@ -37,12 +37,18 @@ class WaiterOrderTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final availableReservations = reservations.where((r) => r.status == 'open').toList();
+    final availableReservations = reservations
+        .where((r) => r.status == 'open')
+        .toList();
     final filteredMenu = menuItems.where((item) {
-      final matchesCategory = selectedCategoryId == null || item.categoryId == selectedCategoryId;
-      final matchesSearch = menuSearch.isEmpty ||
+      final matchesCategory =
+          selectedCategoryId == null || item.categoryId == selectedCategoryId;
+      final matchesSearch =
+          menuSearch.isEmpty ||
           item.name.toLowerCase().contains(menuSearch.toLowerCase()) ||
-          item.descriptionDanish.toLowerCase().contains(menuSearch.toLowerCase());
+          item.descriptionDanish.toLowerCase().contains(
+            menuSearch.toLowerCase(),
+          );
       return matchesCategory && matchesSearch;
     }).toList();
 
@@ -62,7 +68,10 @@ class WaiterOrderTab extends StatelessWidget {
             items: availableReservations.map((r) {
               return DropdownMenuItem(
                 value: r.id,
-                child: Text('${r.name} (${r.date} ${r.time})', style: const TextStyle(color: Colors.white)),
+                child: Text(
+                  '${r.name} (${r.date} ${r.time})',
+                  style: const TextStyle(color: Colors.white),
+                ),
               );
             }).toList(),
             onChanged: onReservationChanged,
@@ -73,22 +82,30 @@ class WaiterOrderTab extends StatelessWidget {
             child: Row(
               children: [
                 ChoiceChip(
-                  label: const Text('Alle', style: TextStyle(color: Colors.white)),
+                  label: const Text(
+                    'Alle',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   selected: selectedCategoryId == null,
                   onSelected: (_) => onCategoryChanged(null),
                   selectedColor: Colors.brown,
                   backgroundColor: Colors.grey[800],
                 ),
-                ...categories.map((cat) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ChoiceChip(
-                    label: Text(cat['name'], style: const TextStyle(color: Colors.white)),
-                    selected: selectedCategoryId == cat['id'],
-                    onSelected: (_) => onCategoryChanged(cat['id']),
-                    selectedColor: Colors.brown,
-                    backgroundColor: Colors.grey[800],
+                ...categories.map(
+                  (cat) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: ChoiceChip(
+                      label: Text(
+                        cat['name'],
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      selected: selectedCategoryId == cat['id'],
+                      onSelected: (_) => onCategoryChanged(cat['id']),
+                      selectedColor: Colors.brown,
+                      backgroundColor: Colors.grey[800],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -108,29 +125,52 @@ class WaiterOrderTab extends StatelessWidget {
           const SizedBox(height: 8),
           Expanded(
             child: filteredMenu.isEmpty
-                ? const Center(child: Text('Ingen retter fundet', style: TextStyle(color: Colors.white70)))
+                ? const Center(
+                    child: Text(
+                      'Ingen retter fundet',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: filteredMenu.length,
                     itemBuilder: (context, idx) {
                       final item = filteredMenu[idx];
                       final existing = orderLines.firstWhere(
                         (ol) => ol.menuItemId == item.id,
-                        orElse: () => OrderLine(menuItemId: item.id, name: item.name, price: item.price, quantity: 0),
+                        orElse: () => OrderLine(
+                          menuItemId: item.id,
+                          name: item.name,
+                          price: item.price,
+                          quantity: 0,
+                        ),
                       );
                       return Card(
                         color: Colors.grey[900],
                         child: ListTile(
-                          title: Text(item.name, style: const TextStyle(color: Colors.white)),
-                          subtitle: Text('${item.price.toStringAsFixed(2)} kr.', style: const TextStyle(color: Colors.white70)),
+                          title: Text(
+                            item.name,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          subtitle: Text(
+                            '${item.price.toStringAsFixed(2)} kr.',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.remove, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                ),
                                 onPressed: existing.quantity > 0
                                     ? () {
-                                        final newLines = List<OrderLine>.from(orderLines);
-                                        final idx = newLines.indexWhere((ol) => ol.menuItemId == item.id);
+                                        final newLines = List<OrderLine>.from(
+                                          orderLines,
+                                        );
+                                        final idx = newLines.indexWhere(
+                                          (ol) => ol.menuItemId == item.id,
+                                        );
                                         if (idx != -1) {
                                           newLines[idx].quantity--;
                                           if (newLines[idx].quantity == 0) {
@@ -141,19 +181,31 @@ class WaiterOrderTab extends StatelessWidget {
                                       }
                                     : null,
                               ),
-                              Text('${existing.quantity}', style: const TextStyle(color: Colors.white)),
+                              Text(
+                                '${existing.quantity}',
+                                style: const TextStyle(color: Colors.white),
+                              ),
                               IconButton(
-                                icon: const Icon(Icons.add, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () {
-                                  final newLines = List<OrderLine>.from(orderLines);
-                                  final idx = newLines.indexWhere((ol) => ol.menuItemId == item.id);
+                                  final newLines = List<OrderLine>.from(
+                                    orderLines,
+                                  );
+                                  final idx = newLines.indexWhere(
+                                    (ol) => ol.menuItemId == item.id,
+                                  );
                                   if (idx == -1) {
-                                    newLines.add(OrderLine(
-                                      menuItemId: item.id,
-                                      name: item.name,
-                                      price: item.price,
-                                      quantity: 1,
-                                    ));
+                                    newLines.add(
+                                      OrderLine(
+                                        menuItemId: item.id,
+                                        name: item.name,
+                                        price: item.price,
+                                        quantity: 1,
+                                      ),
+                                    );
                                   } else {
                                     newLines[idx].quantity++;
                                   }
@@ -179,13 +231,20 @@ class WaiterOrderTab extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Total: ${orderLines.fold<double>(0, (sum, ol) => sum + ol.price * ol.quantity).toStringAsFixed(2)} kr.',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   ElevatedButton(
                     onPressed: orderSubmitting ? null : onSubmitOrder,
                     child: orderSubmitting
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : const Text('Bestil'),
                   ),
                 ],
