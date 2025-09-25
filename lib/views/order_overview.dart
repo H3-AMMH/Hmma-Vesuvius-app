@@ -95,12 +95,18 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
   bool _deleting = false;
   List<dynamic> _orderLines = [];
   String? _error;
-  final _orderViewModel = OrderViewModel();
+  late final OrderViewModel _orderViewModel;
 
   @override
   void initState() {
     super.initState();
+    _orderViewModel = OrderViewModel();
     _fetchOrderLines();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> _fetchOrderLines() async {
