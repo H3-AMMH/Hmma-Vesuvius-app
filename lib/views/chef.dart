@@ -34,7 +34,6 @@ class _ChefPageState extends State<ChefPage> {
   List<MenuItem> _menuItems = [];
   bool _loading = false;
 
-
   // Orders
   final _orderViewModel = OrderViewModel();
   List<Order> _orders = [];
@@ -71,11 +70,15 @@ class _ChefPageState extends State<ChefPage> {
 
   Future<void> _markOrderReady(Order order) async {
     try {
-      await ApiService.updateOrderStatus(order.id, status: 'ready', reservationId: order.reservationId);
+      await ApiService.updateOrderStatus(
+        order.id,
+        status: 'ready',
+        reservationId: order.reservationId,
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ordre #${order.id} er klar!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Ordre #${order.id} er klar!')));
       }
       _fetchOrders();
     } catch (e) {
@@ -96,7 +99,10 @@ class _ChefPageState extends State<ChefPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Ingen ordrer fundet', style: TextStyle(color: Colors.white70)),
+            const Text(
+              'Ingen ordrer fundet',
+              style: TextStyle(color: Colors.white70),
+            ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
               onPressed: _fetchOrders,
@@ -220,7 +226,10 @@ class _ChefPageState extends State<ChefPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hjem'),
           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Ordrer'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: 'Ordrer',
+          ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
@@ -287,7 +296,9 @@ class _ChefOrderDetailsSheetState extends State<_ChefOrderDetailsSheet> {
                 children: [
                   Text(
                     'Ordre #${widget.order.id}',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(color: Colors.white),
                   ),
                   Text(
                     'Status: ${widget.order.status}',
@@ -302,26 +313,43 @@ class _ChefOrderDetailsSheetState extends State<_ChefOrderDetailsSheet> {
                     style: const TextStyle(color: Colors.white70),
                   ),
                   const SizedBox(height: 16),
-                  const Text('Indhold:', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Indhold:',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   if (_error != null)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+                      child: Text(
+                        _error!,
+                        style: const TextStyle(color: Colors.redAccent),
+                      ),
                     ),
                   if (_orderLines.isEmpty && _error == null)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Text('Ingen ordrelinjer', style: TextStyle(color: Colors.white70)),
+                      child: Text(
+                        'Ingen ordrelinjer',
+                        style: TextStyle(color: Colors.white70),
+                      ),
                     ),
                   if (_orderLines.isNotEmpty)
-                    ..._orderLines.map((line) => ListTile(
-                          dense: true,
-                          title: Text(line['name'] ?? '', style: const TextStyle(color: Colors.white)),
-                          subtitle: Text(
-                            '${line['quantity']} x ${line['unit_price']} kr.',
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                        )),
+                    ..._orderLines.map(
+                      (line) => ListTile(
+                        dense: true,
+                        title: Text(
+                          line['name'] ?? '',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          '${line['quantity']} x ${line['unit_price']} kr.',
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    ),
                 ],
               ),
       ),
