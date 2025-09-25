@@ -70,3 +70,11 @@
 
 ### Changes
 - API key for security(Remember to add API_KEY in .env file).
+
+## [1.4.2] - 2025-09-25
+
+### Added
+- Added delete button for deleting orders
+
+### Fixed
+- Fixed minor issues like Deprecations

@@ -185,19 +185,16 @@ class _ChefPageState extends State<ChefPage> {
             ),
             trailing: Switch(
               value: item.isAvailable,
-              activeColor: const Color(0xFFA67B5B),
+              activeThumbColor: const Color(0xFFA67B5B),
               inactiveThumbColor: const Color(0xFF4B3621),
               onChanged: (bool value) async {
-                // Update UI immediately
                 setState(() {
                   item.isAvailable = value;
                 });
 
-                // Update backend
                 try {
                   await ApiService.updateMenuAvailability(item.id, value);
                 } catch (e) {
-                  // Revert UI if backend fails
                   setState(() {
                     item.isAvailable = !value;
                   });
