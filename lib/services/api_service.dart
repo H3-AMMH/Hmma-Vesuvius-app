@@ -41,19 +41,19 @@ class ApiService {
     return json.decode(response.body);
   }
 
-  static Future<List<dynamic>> updateMenuAvailability(
+  static Future<Map<String, dynamic>> updateMenuAvailability(
     int id,
     bool isAvailable,
   ) async {
     final response = await _client().patch(
-      Uri.parse("$_baseUrl/api/menu/$id"),
+      Uri.parse("$_baseUrl/menu/$id"),
       headers: _headers(extra: {'Content-Type': 'application/json'}),
       body: json.encode({'isAvailable': isAvailable ? 1 : 0}),
     );
     if (response.statusCode != 200) {
       throw Exception(response.statusCode);
     }
-    return json.decode(response.body);
+    return json.decode(response.body) as Map<String, dynamic>;
   }
 
   static Future<List<dynamic>> fetchReservations({

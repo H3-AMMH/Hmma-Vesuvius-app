@@ -191,7 +191,6 @@ class _ChefPageState extends State<ChefPage> {
                 // Update UI immediately
                 setState(() {
                   item.isAvailable = value;
-                  print("Updating menu item ${item.id} to $value");
                 });
 
                 // Update backend
