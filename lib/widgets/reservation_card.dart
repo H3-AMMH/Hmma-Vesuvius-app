@@ -5,11 +5,6 @@ class ReservationCard extends StatelessWidget {
   final Reservation reservation;
   final int index;
   final Widget? trailing;
-
-
-
-
-
   const ReservationCard({
     required this.reservation,
     required this.index,
@@ -42,9 +37,9 @@ class ReservationCard extends StatelessWidget {
         ),
         subtitle: Align(
           alignment:
-              Alignment.centerLeft, // stays left, but vertically centered
+              Alignment.centerLeft,
           child: Column(
-            mainAxisSize: MainAxisSize.min, // shrink to content
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
