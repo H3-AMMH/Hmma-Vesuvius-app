@@ -7,7 +7,7 @@ class Reservation {
   final int partySize;
   final int tablesNeeded;
   final String status;
-  final String? tableNumbers; // comma-separated table numbers
+  final String? tableNumbers;
 
   Reservation({
     this.id,
