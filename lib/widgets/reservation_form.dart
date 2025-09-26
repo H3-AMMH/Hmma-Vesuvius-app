@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class ReservationForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -49,15 +50,42 @@ class ReservationForm extends StatelessWidget {
               style: const TextStyle(color: Colors.white),
               validator: (v) => v == null || v.isEmpty ? 'Påkrævet' : null,
             ),
-            TextFormField(
-              controller: telController,
-              decoration: const InputDecoration(
+
+            // --- Phone number field using intl_phone_number_input ---
+            InternationalPhoneNumberInput(
+              initialValue: PhoneNumber(isoCode: 'DK'),
+              onInputChanged: (PhoneNumber number) {
+                telController.text = number.phoneNumber ?? '';
+              },
+              selectorConfig: const SelectorConfig(
+                selectorType: PhoneInputSelectorType.DROPDOWN,
+              ),
+              ignoreBlank: false,
+              autoValidateMode: AutovalidateMode.onUserInteraction,
+              textStyle: const TextStyle(color: Colors.white),
+              inputDecoration: const InputDecoration(
                 labelText: 'Telefon',
                 labelStyle: TextStyle(color: Colors.white),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white54),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
               ),
-              style: const TextStyle(color: Colors.white),
-              validator: (v) => v == null || v.isEmpty ? 'Påkrævet' : null,
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Påkrævet';
+                final digits = value.replaceAll(
+                  RegExp(r'\D'),
+                  '',
+                ); // keep only numbers
+                if (digits.length < 8) {
+                  return 'Ugyldigt nummer';
+                }
+              },
             ),
+
+            // --- Date field ---
             GestureDetector(
               onTap: () async {
                 final picked = await showDatePicker(
@@ -68,7 +96,7 @@ class ReservationForm extends StatelessWidget {
                   lastDate: DateTime.now().add(const Duration(days: 365)),
                   builder: (context, child) => Theme(
                     data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.dark(
+                      colorScheme: const ColorScheme.dark(
                         primary: Colors.brown,
                         onPrimary: Colors.white,
                         surface: Colors.black,
@@ -94,6 +122,8 @@ class ReservationForm extends StatelessWidget {
                 ),
               ),
             ),
+
+            // --- Time field ---
             GestureDetector(
               onTap: () async {
                 final initialTime = TimeOfDay.fromDateTime(
@@ -140,6 +170,8 @@ class ReservationForm extends StatelessWidget {
                 ),
               ),
             ),
+
+            // --- Party size field ---
             TextFormField(
               controller: partySizeController,
               decoration: const InputDecoration(
