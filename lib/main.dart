@@ -84,7 +84,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 0),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 60), // fixed width and height
+                  minimumSize: const Size(200, 60),
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 16),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 60), // fixed width and height
+                  minimumSize: const Size(200, 60),
                 ),
                 onPressed: () {
                   Navigator.push(

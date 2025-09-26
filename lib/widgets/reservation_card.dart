@@ -37,9 +37,9 @@ class ReservationCard extends StatelessWidget {
         ),
         subtitle: Align(
           alignment:
-              Alignment.centerLeft, // stays left, but vertically centered
+              Alignment.centerLeft,
           child: Column(
-            mainAxisSize: MainAxisSize.min, // shrink to content
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
