@@ -5,11 +5,6 @@ class ReservationCard extends StatelessWidget {
   final Reservation reservation;
   final int index;
   final Widget? trailing;
-
-
-
-
-
   const ReservationCard({
     required this.reservation,
     required this.index,

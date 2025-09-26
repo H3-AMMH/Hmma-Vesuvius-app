@@ -40,6 +40,7 @@ class WaiterOrderTab extends StatelessWidget {
     final availableReservations = reservations
         .where((r) => r.status == 'open')
         .toList();
+
     final filteredMenu = menuItems.where((item) {
       final matchesCategory =
           selectedCategoryId == null || item.categoryId == selectedCategoryId;
@@ -49,7 +50,7 @@ class WaiterOrderTab extends StatelessWidget {
           item.descriptionDanish.toLowerCase().contains(
             menuSearch.toLowerCase(),
           );
-      return matchesCategory && matchesSearch;
+      return item.isAvailable && matchesCategory && matchesSearch;
     }).toList();
 
     return Padding(
