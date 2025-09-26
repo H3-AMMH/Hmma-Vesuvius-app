@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/_reservation.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class ReservationCard extends StatelessWidget {
   final Reservation reservation;
@@ -36,8 +37,7 @@ class ReservationCard extends StatelessWidget {
           ),
         ),
         subtitle: Align(
-          alignment:
-              Alignment.centerLeft,
+          alignment: Alignment.centerLeft,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
