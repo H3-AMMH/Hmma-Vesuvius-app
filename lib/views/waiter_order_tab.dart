@@ -97,7 +97,7 @@ class WaiterOrderTab extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ChoiceChip(
                       label: Text(
-                        cat['name'], //"Alle" er på dansk men hvad end dette spøtter ud bliver engelsk
+                        cat['name'],
                         style: const TextStyle(color: Colors.white),
                       ),
                       selected: selectedCategoryId == cat['id'],
