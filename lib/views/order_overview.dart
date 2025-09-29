@@ -15,7 +15,11 @@ class OrderOverviewTab extends StatelessWidget {
     required this.onRefresh,
   });
 
-  Future<void> _showOrderDetails(BuildContext context, Order order, VoidCallback onOrderClosed) async {
+  Future<void> _showOrderDetails(
+    BuildContext context,
+    Order order,
+    VoidCallback onOrderClosed,
+  ) async {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -39,7 +43,10 @@ class OrderOverviewTab extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Ingen ordrer fundet', style: TextStyle(color: Colors.white70)),
+            const Text(
+              'Ingen ordrer fundet',
+              style: TextStyle(color: Colors.white70),
+            ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
               onPressed: onRefresh,
@@ -64,8 +71,23 @@ class OrderOverviewTab extends StatelessWidget {
                 style: const TextStyle(color: Colors.white),
               ),
               subtitle: Text(
-                'Status: ${order.status} | Bord(e): ${order.tableNumbers ?? "-"}\nOprettet: ${order.createdAt}',
+                'Bord(e): ${order.tableNumbers ?? "-"}\nOprettet: ${order.createdAt}',
                 style: const TextStyle(color: Colors.white70),
+              ),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _statusColor(order.status),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  order.status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               onTap: () => _showOrderDetails(context, order, onRefresh),
             ),
@@ -76,14 +98,24 @@ class OrderOverviewTab extends StatelessWidget {
   }
 }
 
+Color _statusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'open':
+      return Colors.green;
+    case 'in progress':
+      return Colors.orange;
+    case 'closed':
+      return Colors.red;
+    default:
+      return Colors.grey;
+  }
+}
+
 class _OrderDetailsSheet extends StatefulWidget {
   final Order order;
   final VoidCallback onOrderClosed;
 
-  const _OrderDetailsSheet({
-    required this.order,
-    required this.onOrderClosed,
-  });
+  const _OrderDetailsSheet({required this.order, required this.onOrderClosed});
 
   @override
   State<_OrderDetailsSheet> createState() => _OrderDetailsSheetState();
@@ -134,9 +166,9 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
     widget.onOrderClosed();
     if (!mounted) return;
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ordre markeret som lukket')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Ordre markeret som lukket')));
   }
 
   Future<void> _deleteOrder() async {
@@ -149,9 +181,9 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
     widget.onOrderClosed();
     if (!mounted) return;
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ordre slettet')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Ordre slettet')));
   }
 
   @override
@@ -167,7 +199,9 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
                 children: [
                   Text(
                     'Ordre #${widget.order.id}',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(color: Colors.white),
                   ),
                   Text(
                     'Status: ${widget.order.status}',
@@ -182,26 +216,43 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
                     style: const TextStyle(color: Colors.white70),
                   ),
                   const SizedBox(height: 16),
-                  const Text('Indhold:', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Indhold:',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   if (_error != null)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+                      child: Text(
+                        _error!,
+                        style: const TextStyle(color: Colors.redAccent),
+                      ),
                     ),
                   if (_orderLines.isEmpty && _error == null)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Text('Ingen ordrelinjer', style: TextStyle(color: Colors.white70)),
+                      child: Text(
+                        'Ingen ordrelinjer',
+                        style: TextStyle(color: Colors.white70),
+                      ),
                     ),
                   if (_orderLines.isNotEmpty)
-                    ..._orderLines.map((line) => ListTile(
-                          dense: true,
-                          title: Text(line['name'] ?? '', style: const TextStyle(color: Colors.white)),
-                          subtitle: Text(
-                            '${line['quantity']} x ${line['unit_price']} kr.',
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                        )),
+                    ..._orderLines.map(
+                      (line) => ListTile(
+                        dense: true,
+                        title: Text(
+                          line['name'] ?? '',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          '${line['quantity']} x ${line['unit_price']} kr.',
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 16),
                   if (widget.order.status != 'closed')
                     SizedBox(
@@ -209,7 +260,13 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
                       child: ElevatedButton.icon(
                         onPressed: _closing ? null : _closeOrder,
                         icon: _closing
-                            ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Icon(Icons.check),
                         label: const Text('Markér som lukket'),
                       ),
@@ -223,9 +280,19 @@ class _OrderDetailsSheetState extends State<_OrderDetailsSheet> {
                       ),
                       onPressed: _deleting ? null : _deleteOrder,
                       icon: _deleting
-                          ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
                           : const Icon(Icons.delete, color: Colors.white),
-                      label: const Text('Slet ordre', style: TextStyle(color: Colors.white)),
+                      label: const Text(
+                        'Slet ordre',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],

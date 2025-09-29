@@ -82,6 +82,7 @@ class ReservationForm extends StatelessWidget {
                 if (digits.length < 8) {
                   return 'Ugyldigt nummer';
                 }
+                return null;
               },
             ),
 
