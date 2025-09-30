@@ -87,6 +87,21 @@ class ApiService {
     return json.decode(response.body);
   }
 
+  static Future<Map<String, dynamic>> updateReservation(
+    int id,
+    String status,
+  ) async {
+    final response = await _client().patch(
+      Uri.parse("$_baseUrl/reservations/$id"),
+      headers: _headers(extra: {'Content-Type': 'application/json'}),
+      body: json.encode({'status': status}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(response.statusCode);
+    }
+    return json.decode(response.body) as Map<String, dynamic>;
+  }
+
   static Future<List<dynamic>> fetchOrders() async {
     final response = await _client().get(
       Uri.parse("$_baseUrl/orders"),
