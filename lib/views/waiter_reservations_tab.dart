@@ -31,8 +31,12 @@ class WaiterReservationsTab extends StatelessWidget {
               Expanded(
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: reservationTabIndex == 0 ? Colors.white : Colors.white70,
-                    backgroundColor: reservationTabIndex == 0 ? Colors.brown : Colors.transparent,
+                    foregroundColor: reservationTabIndex == 0
+                        ? Colors.white
+                        : Colors.white70,
+                    backgroundColor: reservationTabIndex == 0
+                        ? Colors.brown
+                        : Colors.transparent,
                   ),
                   onPressed: () {
                     if (reservationTabIndex != 0) onTabChanged(0);
@@ -43,8 +47,12 @@ class WaiterReservationsTab extends StatelessWidget {
               Expanded(
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: reservationTabIndex == 1 ? Colors.white : Colors.white70,
-                    backgroundColor: reservationTabIndex == 1 ? Colors.brown : Colors.transparent,
+                    foregroundColor: reservationTabIndex == 1
+                        ? Colors.white
+                        : Colors.white70,
+                    backgroundColor: reservationTabIndex == 1
+                        ? Colors.brown
+                        : Colors.transparent,
                   ),
                   onPressed: () {
                     if (reservationTabIndex != 1) onTabChanged(1);
