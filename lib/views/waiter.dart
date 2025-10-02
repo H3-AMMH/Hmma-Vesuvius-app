@@ -72,8 +72,14 @@ class _WaiterPageState extends State<WaiterPage> {
       final reservations = await _viewModel.fetchReservations(
         future: _reservationTabIndex == 1,
       );
+
+      // Filter only 'open' reservations
+      final openReservations = reservations
+          .where((reservation) => reservation.status == 'open')
+          .toList();
+
       setState(() {
-        _reservations = reservations;
+        _reservations = openReservations;
         _loading = false;
       });
     } catch (e) {
@@ -109,13 +115,7 @@ class _WaiterPageState extends State<WaiterPage> {
         if (!mounted) return;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(
-          SnackBar(
-            content: Text(
-              _formatErrorMessage(result),
-            ),
-          ),
-        );
+        ).showSnackBar(SnackBar(content: Text(_formatErrorMessage(result))));
       }
     } catch (e) {
       setState(() => _submitting = false);
@@ -180,7 +180,9 @@ class _WaiterPageState extends State<WaiterPage> {
     if (_selectedReservationId == null || _orderLines.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vælg reservation og tilføj mindst én ret')),
+          const SnackBar(
+            content: Text('Vælg reservation og tilføj mindst én ret'),
+          ),
         );
       }
       return;
@@ -188,7 +190,9 @@ class _WaiterPageState extends State<WaiterPage> {
     setState(() => _orderSubmitting = true);
     try {
       final orderResult = await _viewModel.createOrder(_selectedReservationId!);
-      if (orderResult['id'] == null) throw Exception('Kunne ikke oprette bestilling');
+      if (orderResult['id'] == null) {
+        throw Exception('Kunne ikke oprette bestilling');
+      }
       final orderId = orderResult['id'];
       for (final line in _orderLines) {
         await _viewModel.createOrderLine(
@@ -200,17 +204,17 @@ class _WaiterPageState extends State<WaiterPage> {
       }
       setState(() => _orderSubmitting = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bestilling oprettet!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Bestilling oprettet!')));
       }
       _resetOrderTab();
     } catch (e) {
       setState(() => _orderSubmitting = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fejl: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fejl: ${e.toString()}')));
       }
     }
   }
@@ -250,10 +254,14 @@ class _WaiterPageState extends State<WaiterPage> {
                   selectedReservationId: _selectedReservationId,
                   selectedCategoryId: _selectedCategoryId,
                   orderSubmitting: _orderSubmitting,
-                  onReservationChanged: (id) => setState(() => _selectedReservationId = id),
-                  onCategoryChanged: (id) => setState(() => _selectedCategoryId = id),
-                  onMenuSearchChanged: (val) => setState(() => _menuSearch = val),
-                  onOrderLinesChanged: (lines) => setState(() => _orderLines = lines),
+                  onReservationChanged: (id) =>
+                      setState(() => _selectedReservationId = id),
+                  onCategoryChanged: (id) =>
+                      setState(() => _selectedCategoryId = id),
+                  onMenuSearchChanged: (val) =>
+                      setState(() => _menuSearch = val),
+                  onOrderLinesChanged: (lines) =>
+                      setState(() => _orderLines = lines),
                   onSubmitOrder: _submitOrder,
                 )
               : OrderOverviewTab(

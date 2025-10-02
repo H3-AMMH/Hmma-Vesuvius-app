@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 import '../models/_reservation.dart';
+import '../services/api_service.dart'; // where updateReservation lives
 
 class ReservationCard extends StatelessWidget {
   final Reservation reservation;
   final int index;
   final Widget? trailing;
+
   const ReservationCard({
     required this.reservation,
     required this.index,
     this.trailing,
     super.key,
   });
+
+  Future<void> _closeReservation(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ApiService.updateReservation(reservation.id, "closed");
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Reservation closed")),
+      );
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +78,14 @@ class ReservationCard extends StatelessWidget {
             ],
           ),
         ),
-        trailing: trailing,
+        trailing:
+            trailing ??
+            IconButton(
+              icon: const Icon(Icons.close, color: Colors.red),
+              onPressed: () {
+                _closeReservation(context);
+              },
+            ),
       ),
     );
   }

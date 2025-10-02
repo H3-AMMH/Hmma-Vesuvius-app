@@ -23,7 +23,7 @@ Widget buildReservations({
           itemBuilder: (context, index) {
             final res = reservations[index];
             return ReservationCard(
-              key: Key('${res.id ?? index}'),
+              key: Key('${res.id}'),
               reservation: res,
               index: index,
               trailing: trailingBuilder?.call(context, res),

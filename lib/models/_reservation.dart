@@ -1,5 +1,5 @@
 class Reservation {
-  final int? id;
+  final int id;
   final String name;
   final String tel;
   final String date;
@@ -10,7 +10,7 @@ class Reservation {
   final String? tableNumbers;
 
   Reservation({
-    this.id,
+    required this.id,
     required this.name,
     required this.tel,
     required this.date,
