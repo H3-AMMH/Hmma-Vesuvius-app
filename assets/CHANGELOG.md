@@ -78,3 +78,8 @@
 
 ### Fixed
 - Fixed minor issues like Deprecations
+
+## [1.4.3] - 2025-10-2
+
+### Added
+- Added notification when order is marked as ready by chef

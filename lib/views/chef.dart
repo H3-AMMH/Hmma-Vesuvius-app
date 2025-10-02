@@ -3,8 +3,8 @@ import '../viewmodels/chef_view_model.dart';
 import '../models/menu_item.dart';
 import '../models/order.dart';
 import '../viewmodels/order_view_model.dart';
-
 import '../services/api_service.dart';
+import '../services/notification_service.dart';
 
 class ChefApp extends StatelessWidget {
   const ChefApp({super.key});
@@ -72,6 +72,10 @@ class _ChefPageState extends State<ChefPage> {
         order.id,
         status: 'ready',
         reservationId: order.reservationId,
+      );
+      await NotificationService.showOrderReadyNotification(
+        orderId: order.id,
+        tableNumbers: order.tableNumbers,
       );
       if (mounted) {
         ScaffoldMessenger.of(
@@ -172,8 +176,6 @@ class _ChefPageState extends State<ChefPage> {
         itemCount: _menuItems.length,
         itemBuilder: (context, index) {
           final item = _menuItems[index];
-
-          //r_switchStates.putIfAbsent(index, () => true);
 
           return ListTile(
             title: Text(item.name, style: const TextStyle(color: Colors.white)),
