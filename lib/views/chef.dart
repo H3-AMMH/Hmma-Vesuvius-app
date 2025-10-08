@@ -165,7 +165,7 @@ class _ChefPageState extends State<ChefPage> {
     if (_currentIndex == 0) {
       return _buildOrdersTab();
     } else if (_currentIndex == 1) {
-      f(_loading) {
+      if (_loading) {
         return const Center(child: CircularProgressIndicator());
       }
 
@@ -226,11 +226,11 @@ class _ChefPageState extends State<ChefPage> {
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
-          if (index == 1) {
-            _fetchMenu();
-          }
           if (index == 0) {
             _fetchOrders();
+          }
+          if (index == 1) {
+            _fetchMenu();
           }
         },
       ),
