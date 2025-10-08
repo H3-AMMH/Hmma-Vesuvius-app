@@ -83,3 +83,8 @@
 
 ### Added
 - Added notification when order is marked as ready by chef
+
+## [1.4.4] - 2025-10-8
+
+### Removed
+- Removed unused home-tab in the chef page

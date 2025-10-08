@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/_reservation.dart';
-import '../services/api_service.dart'; // where updateReservation lives
+import '../services/api_service.dart';
 
 class ReservationCard extends StatelessWidget {
   final Reservation reservation;
