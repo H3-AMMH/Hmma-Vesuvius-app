@@ -38,6 +38,13 @@ class _ChefPageState extends State<ChefPage> {
   final _orderViewModel = OrderViewModel();
   List<Order> _orders = [];
   bool _ordersLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrders();
+  }
+
   Future<void> _fetchMenu() async {
     setState(() => _loading = true);
     try {
