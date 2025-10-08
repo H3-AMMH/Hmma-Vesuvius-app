@@ -12,7 +12,7 @@ class ChefApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Café Vesuvius - Chef',
+      title: 'Café Vesuvius - Kok',
       theme: Theme.of(
         context,
       ).copyWith(scaffoldBackgroundColor: const Color(0xFF000000)),
@@ -62,7 +62,6 @@ class _ChefPageState extends State<ChefPage> {
       });
     } catch (e) {
       setState(() => _ordersLoading = false);
-      debugPrint('Order fetch error: $e');
     }
   }
 
@@ -164,11 +163,12 @@ class _ChefPageState extends State<ChefPage> {
 
   Widget _buildBody() {
     if (_currentIndex == 0) {
-      return const Center(child: Text("Velkommen til Kokke-siden"));
+      return _buildOrdersTab();
     } else if (_currentIndex == 1) {
-      if (_loading) {
+      f(_loading) {
         return const Center(child: CircularProgressIndicator());
       }
+
       if (_menuItems.isEmpty) {
         return const Center(child: Text("Ingen retter fundet"));
       }
@@ -205,8 +205,6 @@ class _ChefPageState extends State<ChefPage> {
           );
         },
       );
-    } else if (_currentIndex == 2) {
-      return _buildOrdersTab();
     } else {
       return const Center(child: Text("Ordrer"));
     }
@@ -215,24 +213,23 @@ class _ChefPageState extends State<ChefPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Café Vesuvius - Chef')),
+      appBar: AppBar(title: const Text('Café Vesuvius - Kok')),
       body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hjem'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),
             label: 'Ordrer',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Menu'),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
           if (index == 1) {
             _fetchMenu();
           }
-          if (index == 2) {
+          if (index == 0) {
             _fetchOrders();
           }
         },
